@@ -115,34 +115,35 @@ fi
 echo -e "${BLUE}Detecting project frameworks...${NC}"
 echo ""
 
+# Helper function to get display name from kit.json (Bash 3 compatible)
+get_display_name() {
+    local kit_dir="$1"
+    local kit_json="$kit_dir/kit.json"
+
+    if command -v jq &> /dev/null; then
+        jq -r '.displayName // .name' "$kit_json" 2>/dev/null || basename "$kit_dir"
+    else
+        basename "$kit_dir"
+    fi
+}
+
 # Discover all available kits
 declare -a ALL_KITS
 declare -a DETECTED_KITS
-declare -A KIT_DISPLAY_NAMES
 
 if [ -d "$TEMPLATE_DIR/kits" ]; then
     for kit_dir in "$TEMPLATE_DIR/kits"/*; do
         if [ -d "$kit_dir" ] && [ -f "$kit_dir/kit.json" ]; then
             kit_name=$(basename "$kit_dir")
-
-            # All kits are now atomic
-
             ALL_KITS+=("$kit_name")
-
-            # Extract display name using jq if available, otherwise use kit name
-            if command -v jq &> /dev/null; then
-                display_name=$(jq -r '.displayName // .name' "$kit_dir/kit.json" 2>/dev/null || echo "$kit_name")
-            else
-                display_name="$kit_name"
-            fi
-            KIT_DISPLAY_NAMES[$kit_name]="$display_name"
         fi
     done
 fi
 
 # Detect which kits match the project
 for kit_name in "${ALL_KITS[@]}"; do
-    kit_json="$TEMPLATE_DIR/kits/$kit_name/kit.json"
+    kit_dir="$TEMPLATE_DIR/kits/$kit_name"
+    kit_json="$kit_dir/kit.json"
 
     if [ -f "$kit_json" ]; then
         # Extract detect command
@@ -157,7 +158,8 @@ for kit_name in "${ALL_KITS[@]}"; do
         if [ -n "$detect_cmd" ]; then
             if eval "$detect_cmd" 2>/dev/null; then
                 DETECTED_KITS+=("$kit_name")
-                echo -e "${GREEN}✓${NC} Detected: ${KIT_DISPLAY_NAMES[$kit_name]}"
+                display_name=$(get_display_name "$kit_dir")
+                echo -e "${GREEN}✓${NC} Detected: $display_name"
             fi
         fi
     fi
@@ -179,7 +181,8 @@ if [ "$YES_MODE" = true ]; then
     if [ ${#KITS_TO_INSTALL[@]} -gt 0 ]; then
         echo -e "${BLUE}Auto-installing detected kits:${NC}"
         for kit in "${KITS_TO_INSTALL[@]}"; do
-            echo -e "  - ${KIT_DISPLAY_NAMES[$kit]}"
+            display_name=$(get_display_name "$TEMPLATE_DIR/kits/$kit")
+            echo -e "  - $display_name"
         done
     else
         echo -e "${BLUE}Installing core infrastructure only${NC}"
@@ -190,7 +193,8 @@ else
         echo -e "${BLUE}Detected kits available:${NC}"
 
         for kit in "${DETECTED_KITS[@]}"; do
-            read -p "Install ${KIT_DISPLAY_NAMES[$kit]}? (Y/n): " -n 1 -r
+            display_name=$(get_display_name "$TEMPLATE_DIR/kits/$kit")
+            read -p "Install $display_name? (Y/n): " -n 1 -r
             echo
             if [[ ! $REPLY =~ ^[Nn]$ ]]; then
                 KITS_TO_INSTALL+=("$kit")
@@ -208,7 +212,8 @@ else
             continue
         fi
 
-        read -p "Install ${KIT_DISPLAY_NAMES[$kit]}? (y/N): " -n 1 -r
+        display_name=$(get_display_name "$TEMPLATE_DIR/kits/$kit")
+        read -p "Install $display_name? (y/N): " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             KITS_TO_INSTALL+=("$kit")
@@ -275,7 +280,8 @@ for kit in "${KITS_TO_INSTALL[@]}"; do
         cp "$kit_dir/commands/"*.md .claude/commands/ 2>/dev/null || true
     fi
 
-    echo -e "${GREEN}✓${NC} Installed ${KIT_DISPLAY_NAMES[$kit]} kit"
+    display_name=$(get_display_name "$kit_dir")
+    echo -e "${GREEN}✓${NC} Installed $display_name kit"
 done
 
 if [ ${#KITS_TO_INSTALL[@]} -eq 0 ]; then
