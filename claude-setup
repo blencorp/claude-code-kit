@@ -194,7 +194,7 @@ else
 
         for kit in "${DETECTED_KITS[@]}"; do
             display_name=$(get_display_name "$TEMPLATE_DIR/kits/$kit")
-            read -p "Install $display_name? (Y/n): " -n 1 -r
+            read -p "Install $display_name kit? (Y/n): " -n 1 -r
             echo
             if [[ ! $REPLY =~ ^[Nn]$ ]]; then
                 KITS_TO_INSTALL+=("$kit")
@@ -202,23 +202,29 @@ else
         done
     fi
 
-    # Ask about non-detected kits
+    # Ask if user wants to see additional kits
     echo ""
-    echo -e "${BLUE}Additional kits available:${NC}"
+    read -p "Install additional kits? (y/N): " -n 1 -r
+    echo
 
-    for kit in "${ALL_KITS[@]}"; do
-        # Skip if already in detected kits
-        if [[ " ${DETECTED_KITS[@]} " =~ " ${kit} " ]]; then
-            continue
-        fi
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo ""
+        echo -e "${BLUE}Additional kits available:${NC}"
 
-        display_name=$(get_display_name "$TEMPLATE_DIR/kits/$kit")
-        read -p "Install $display_name? (y/N): " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            KITS_TO_INSTALL+=("$kit")
-        fi
-    done
+        for kit in "${ALL_KITS[@]}"; do
+            # Skip if already in detected kits
+            if [[ " ${DETECTED_KITS[@]} " =~ " ${kit} " ]]; then
+                continue
+            fi
+
+            display_name=$(get_display_name "$TEMPLATE_DIR/kits/$kit")
+            read -p "Install $display_name kit? (y/N): " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                KITS_TO_INSTALL+=("$kit")
+            fi
+        done
+    fi
 fi
 
 echo ""
