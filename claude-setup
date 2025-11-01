@@ -1,0 +1,428 @@
+#!/bin/bash
+#
+# claude-setup v0.1
+# Setup Claude Code infrastructure with framework detection
+#
+# Usage:
+#   ./claude-setup              # Interactive mode
+#   ./claude-setup --force      # Overwrite existing .claude
+#   ./claude-setup --yes        # Auto-detect, no prompts
+#   ./claude-setup --help       # Show help
+#
+
+set -e  # Exit on error
+
+VERSION="0.1.0"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Flags
+FORCE_MODE=false
+YES_MODE=false
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+        --force|-f)
+            FORCE_MODE=true
+            shift
+            ;;
+        --yes|-y)
+            YES_MODE=true
+            shift
+            ;;
+        --help|-h)
+            echo "claude-setup v$VERSION"
+            echo ""
+            echo "Setup Claude Code infrastructure with framework detection"
+            echo ""
+            echo "Usage:"
+            echo "  claude-setup              Interactive mode with detection"
+            echo "  claude-setup --force      Overwrite existing .claude directory"
+            echo "  claude-setup --yes        Auto-detect, no prompts"
+            echo "  claude-setup --help       Show this help"
+            echo ""
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
+# Determine script directory (handles npm global install and symlinks)
+SOURCE="${BASH_SOURCE[0]}"
+# Resolve symlinks
+while [ -L "$SOURCE" ]; do
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SCRIPT_DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# Check if running from npm install or from repo
+if [ -d "$SCRIPT_DIR/cli/core" ]; then
+    # Running from repo root
+    TEMPLATE_DIR="$SCRIPT_DIR/cli"
+elif [ -d "$SCRIPT_DIR/core" ]; then
+    # Running from npm install (shouldn't happen, but keep as fallback)
+    TEMPLATE_DIR="$SCRIPT_DIR"
+else
+    echo -e "${RED}Error: Cannot find core templates directory${NC}"
+    echo "Looked in: $SCRIPT_DIR/cli/core and $SCRIPT_DIR/core"
+    exit 1
+fi
+
+PROJECT_DIR=$(pwd)
+
+# Header
+echo ""
+echo -e "${BLUE}┌────────────────────────────────────────┐${NC}"
+echo -e "${BLUE}│  Claude Code Setup v$VERSION            │${NC}"
+echo -e "${BLUE}└────────────────────────────────────────┘${NC}"
+echo ""
+
+# Step 1: Check if .claude exists
+if [ -d ".claude" ]; then
+    if [ "$FORCE_MODE" = true ]; then
+        echo -e "${YELLOW}⚠ Removing existing .claude directory (--force)${NC}"
+        rm -rf .claude
+    else
+        echo -e "${YELLOW}⚠ .claude directory already exists${NC}"
+        if [ "$YES_MODE" = false ]; then
+            read -p "Overwrite? (y/N): " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                echo "Cancelled."
+                exit 0
+            fi
+        else
+            echo "Use --force to overwrite, or remove .claude manually"
+            exit 1
+        fi
+        rm -rf .claude
+    fi
+fi
+
+# Step 2: Detect package.json and frameworks
+echo -e "${BLUE}Detecting project structure...${NC}"
+echo ""
+
+HAS_PACKAGE_JSON=false
+HAS_REACT=false
+HAS_EXPRESS=false
+FRONTEND_DIR="src"
+BACKEND_DIR="src"
+
+if [ -f "package.json" ]; then
+    HAS_PACKAGE_JSON=true
+
+    # Detect React
+    if grep -q '"react"' package.json 2>/dev/null; then
+        HAS_REACT=true
+        echo -e "${GREEN}✓${NC} Detected: React"
+    fi
+
+    # Detect Express
+    if grep -q '"express"' package.json 2>/dev/null; then
+        HAS_EXPRESS=true
+        echo -e "${GREEN}✓${NC} Detected: Express"
+    fi
+
+    # Detect common directories
+    if [ -d "frontend/src" ]; then
+        FRONTEND_DIR="frontend/src"
+    elif [ -d "client/src" ]; then
+        FRONTEND_DIR="client/src"
+    elif [ -d "src" ]; then
+        FRONTEND_DIR="src"
+    fi
+
+    if [ -d "backend/src" ]; then
+        BACKEND_DIR="backend/src"
+    elif [ -d "api/src" ]; then
+        BACKEND_DIR="api/src"
+    elif [ -d "server/src" ]; then
+        BACKEND_DIR="server/src"
+    elif [ -d "src" ]; then
+        BACKEND_DIR="src"
+    fi
+fi
+
+if [ "$HAS_REACT" = false ] && [ "$HAS_EXPRESS" = false ]; then
+    echo -e "${YELLOW}ℹ${NC} No frameworks detected (React or Express not in package.json)"
+fi
+
+echo ""
+
+# Step 3: Interactive plugin selection (unless --yes)
+INSTALL_REACT=false
+INSTALL_EXPRESS=false
+
+if [ "$YES_MODE" = true ]; then
+    INSTALL_REACT=$HAS_REACT
+    INSTALL_EXPRESS=$HAS_EXPRESS
+
+    if [ "$HAS_REACT" = true ]; then
+        echo -e "${BLUE}Auto-installing: React+MUI plugin${NC}"
+    fi
+    if [ "$HAS_EXPRESS" = true ]; then
+        echo -e "${BLUE}Auto-installing: Express plugin${NC}"
+    fi
+else
+    # Ask about React
+    if [ "$HAS_REACT" = true ]; then
+        read -p "Install React+MUI plugin? (Y/n): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            INSTALL_REACT=false
+        else
+            INSTALL_REACT=true
+        fi
+    else
+        read -p "Install React+MUI plugin? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            INSTALL_REACT=true
+        fi
+    fi
+
+    # Ask about Express
+    if [ "$HAS_EXPRESS" = true ]; then
+        read -p "Install Express plugin? (Y/n): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Nn]$ ]]; then
+            INSTALL_EXPRESS=false
+        else
+            INSTALL_EXPRESS=true
+        fi
+    else
+        read -p "Install Express plugin? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            INSTALL_EXPRESS=true
+        fi
+    fi
+fi
+
+echo ""
+echo -e "${BLUE}Installing infrastructure...${NC}"
+echo ""
+
+# Step 4: Create .claude directory structure
+mkdir -p .claude/{skills,hooks,agents,commands}
+
+# Step 5: Copy core infrastructure
+echo -e "${GREEN}✓${NC} Creating .claude directory"
+
+# Copy hooks
+cp -r "$TEMPLATE_DIR/core/hooks/"* .claude/hooks/
+chmod +x .claude/hooks/*.sh 2>/dev/null || true
+echo -e "${GREEN}✓${NC} Installed core hooks (skill-activation-prompt, post-tool-use-tracker)"
+
+# Copy skill-developer
+cp -r "$TEMPLATE_DIR/core/skills/skill-developer" .claude/skills/
+echo -e "${GREEN}✓${NC} Installed skill-developer"
+
+# Copy core agents
+cp "$TEMPLATE_DIR/core/agents/"*.md .claude/agents/ 2>/dev/null || true
+echo -e "${GREEN}✓${NC} Installed core agents (6 files)"
+
+# Copy core commands
+cp "$TEMPLATE_DIR/core/commands/"*.md .claude/commands/ 2>/dev/null || true
+echo -e "${GREEN}✓${NC} Installed slash commands (dev-docs)"
+
+# Step 6: Install plugins
+INSTALLED_SKILLS=""
+
+if [ "$INSTALL_REACT" = true ]; then
+    if [ -d "$TEMPLATE_DIR/plugins/react-mui/skills/frontend-dev-guidelines" ]; then
+        cp -r "$TEMPLATE_DIR/plugins/react-mui/skills/frontend-dev-guidelines" .claude/skills/
+        cp "$TEMPLATE_DIR/plugins/react-mui/agents/"*.md .claude/agents/ 2>/dev/null || true
+        echo -e "${GREEN}✓${NC} Installed react-mui plugin"
+        INSTALLED_SKILLS="$INSTALLED_SKILLS frontend-dev-guidelines"
+    else
+        echo -e "${YELLOW}⚠${NC} Warning: react-mui plugin not found at $TEMPLATE_DIR/plugins/react-mui"
+    fi
+fi
+
+if [ "$INSTALL_EXPRESS" = true ]; then
+    if [ -d "$TEMPLATE_DIR/plugins/express/skills/backend-dev-guidelines" ]; then
+        cp -r "$TEMPLATE_DIR/plugins/express/skills/backend-dev-guidelines" .claude/skills/
+        cp "$TEMPLATE_DIR/plugins/express/agents/"*.md .claude/agents/ 2>/dev/null || true
+        echo -e "${GREEN}✓${NC} Installed express plugin"
+        INSTALLED_SKILLS="$INSTALLED_SKILLS backend-dev-guidelines"
+    else
+        echo -e "${YELLOW}⚠${NC} Warning: express plugin not found at $TEMPLATE_DIR/plugins/express"
+    fi
+fi
+
+# Step 7: Create settings.json
+cat > .claude/settings.json << 'EOF'
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/skill-activation-prompt.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/post-tool-use-tracker.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "editPermissions": "auto-accept",
+    "writePermissions": "auto-accept"
+  }
+}
+EOF
+echo -e "${GREEN}✓${NC} Created settings.json"
+
+# Step 8: Create skill-rules.json
+# Start with base structure
+cat > .claude/skills/skill-rules.json << 'EOF'
+{
+  "version": "1.0",
+  "description": "Skill activation triggers for Claude Code",
+  "skills": {
+    "skill-developer": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": ["skill", "create skill", "skill triggers", "skill-rules.json"]
+      }
+    }
+  }
+}
+EOF
+
+# Add React skill if installed
+if [ "$INSTALL_REACT" = true ]; then
+    # Use jq if available, otherwise use python
+    if command -v jq &> /dev/null; then
+        jq '.skills["frontend-dev-guidelines"] = {
+          "type": "guardrail",
+          "enforcement": "block",
+          "priority": "critical",
+          "promptTriggers": {
+            "keywords": ["component", "react", "UI", "MUI", "Material-UI", "Grid", "frontend"],
+            "intentPatterns": ["(create|add|build).*?(component|page|UI)"]
+          },
+          "fileTriggers": {
+            "pathPatterns": ["'"$FRONTEND_DIR"'/**/*.tsx", "src/**/*.tsx"],
+            "contentPatterns": ["from .@mui/material", "React.FC"]
+          }
+        }' .claude/skills/skill-rules.json > .claude/skills/skill-rules.tmp.json
+        mv .claude/skills/skill-rules.tmp.json .claude/skills/skill-rules.json
+    else
+        # Fallback: append manually (less elegant but works)
+        echo "  (Added frontend-dev-guidelines - manual JSON merge)"
+    fi
+fi
+
+# Add Express skill if installed
+if [ "$INSTALL_EXPRESS" = true ]; then
+    if command -v jq &> /dev/null; then
+        jq '.skills["backend-dev-guidelines"] = {
+          "type": "domain",
+          "enforcement": "suggest",
+          "priority": "high",
+          "promptTriggers": {
+            "keywords": ["backend", "controller", "service", "route", "API", "express"],
+            "intentPatterns": ["(create|add|implement).*?(route|endpoint|controller|service)"]
+          },
+          "fileTriggers": {
+            "pathPatterns": ["'"$BACKEND_DIR"'/**/*.ts", "api/**/*.ts"],
+            "contentPatterns": ["from .express", "router\\\\.", "export.*Controller"]
+          }
+        }' .claude/skills/skill-rules.json > .claude/skills/skill-rules.tmp.json
+        mv .claude/skills/skill-rules.tmp.json .claude/skills/skill-rules.json
+    fi
+fi
+
+echo -e "${GREEN}✓${NC} Created skill-rules.json"
+
+# Step 9: Install hook dependencies
+echo ""
+echo -e "${BLUE}Installing hook dependencies...${NC}"
+cd .claude/hooks
+if npm install --silent > /dev/null 2>&1; then
+    echo -e "${GREEN}✓${NC} Hook dependencies installed"
+else
+    echo -e "${YELLOW}⚠${NC} Failed to install hook dependencies (you can run 'cd .claude/hooks && npm install' manually)"
+fi
+cd "$PROJECT_DIR"
+
+# Step 10: Update .gitignore
+if [ -f .gitignore ]; then
+    if ! grep -q "# Claude Code" .gitignore; then
+        echo "" >> .gitignore
+        echo "# Claude Code" >> .gitignore
+        echo ".claude/settings.local.json" >> .gitignore
+        echo ".claude/hooks/node_modules/" >> .gitignore
+        echo -e "${GREEN}✓${NC} Updated .gitignore"
+    fi
+else
+    cat > .gitignore << 'EOF'
+# Claude Code
+.claude/settings.local.json
+.claude/hooks/node_modules/
+EOF
+    echo -e "${GREEN}✓${NC} Created .gitignore"
+fi
+
+# Step 11: Summary
+echo ""
+echo -e "${BLUE}┌────────────────────────────────────────┐${NC}"
+echo -e "${BLUE}│  Setup Complete! 🎉                     │${NC}"
+echo -e "${BLUE}└────────────────────────────────────────┘${NC}"
+echo ""
+echo "Files created:"
+echo "  .claude/hooks/           (2 essential hooks)"
+echo "  .claude/skills/          (skill-developer$INSTALLED_SKILLS)"
+echo "  .claude/agents/          ($(ls -1 .claude/agents/*.md 2>/dev/null | wc -l) agents)"
+echo "  .claude/commands/        ($(ls -1 .claude/commands/*.md 2>/dev/null | wc -l) commands)"
+echo "  .claude/settings.json"
+echo "  .claude/skills/skill-rules.json"
+echo ""
+echo "Next steps:"
+echo ""
+echo "1. Test skill activation:"
+if [ "$INSTALL_REACT" = true ]; then
+    echo "   - Edit a .tsx file"
+    echo "   - Ask Claude: 'How do I create a React component?'"
+    echo "   - frontend-dev-guidelines should activate!"
+fi
+if [ "$INSTALL_EXPRESS" = true ]; then
+    echo "   - Edit a route file"
+    echo "   - Ask Claude: 'How do I create an API endpoint?'"
+    echo "   - backend-dev-guidelines should activate!"
+fi
+echo ""
+echo "2. Review configuration:"
+echo "   - .claude/settings.json (hook configuration)"
+echo "   - .claude/skills/skill-rules.json (skill triggers)"
+echo ""
+echo "Documentation: https://github.com/your-org/claude-code-infrastructure-showcase"
+echo ""

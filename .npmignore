@@ -1,0 +1,12 @@
+# Don't include these in npm package
+*.tgz
+.git/
+.github/
+.claude/
+dev/
+CLAUDE_INTEGRATION_GUIDE.md
+ANTHROPIC_SKILLS_RESEARCH_REPORT.md
+CLI_ARCHITECTURE.md
+
+# Keep these
+!cli/

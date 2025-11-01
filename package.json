@@ -1,0 +1,39 @@
+{
+  "name": "claude-code-setup",
+  "version": "0.1.0",
+  "description": "Setup Claude Code infrastructure with framework detection",
+  "bin": {
+    "claude-code-setup": "./claude-setup"
+  },
+  "files": [
+    "claude-setup",
+    "cli/core/",
+    "cli/plugins/"
+  ],
+  "scripts": {
+    "test": "echo \"Run: ./claude-setup --help\" && exit 0"
+  },
+  "keywords": [
+    "claude-code",
+    "ai",
+    "setup",
+    "react",
+    "express",
+    "mui",
+    "skills",
+    "hooks"
+  ],
+  "author": "Claude Code Infrastructure Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blencorp/claude-code-infrastructure-showcase"
+  },
+  "bugs": {
+    "url": "https://github.com/blencorp/claude-code-infrastructure-showcase/issues"
+  },
+  "homepage": "https://github.com/blencorp/claude-code-infrastructure-showcase#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

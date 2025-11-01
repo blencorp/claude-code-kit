@@ -24,6 +24,27 @@ Born from 6 months of real-world use managing a complex TypeScript microservices
 
 ## Quick Start - Pick Your Path
 
+### ⚡ Automated Setup (New!)
+
+**The fastest way to get started:**
+
+```bash
+npx claude-code-setup
+```
+
+This will:
+- Detect your frameworks (React, Express, etc.)
+- Copy relevant skills and hooks
+- Configure everything automatically
+- Takes < 30 seconds
+
+**Or install globally:**
+```bash
+npm install -g claude-code-setup
+cd your-project
+claude-code-setup
+```
+
 ### 🤖 Using Claude Code to Integrate?
 
 **Claude:** Read [`CLAUDE_INTEGRATION_GUIDE.md`](CLAUDE_INTEGRATION_GUIDE.md) for step-by-step integration instructions tailored for AI-assisted setup.
