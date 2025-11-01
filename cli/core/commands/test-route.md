@@ -31,18 +31,17 @@ Test the specified route thoroughly:
    - Authentication/authorization failures
 
 4. **Execute Tests**
-   - Use the `Task` tool to launch the `auth-route-tester` agent:
-
-```json
-{
-    "tool": "Task",
-    "parameters": {
-        "subagent_type": "auth-route-tester",
-        "description": "test route functionality",
-        "prompt": "Test the route: $ARGUMENTS\n\nPerform the following:\n1. Verify route exists and is registered\n2. Test with valid authentication and valid payload\n3. Test with missing/invalid fields\n4. Test authorization (if applicable)\n5. Verify database records are created/updated correctly\n6. Check response status codes and body structure\n\nProvide detailed test results for each scenario."
-    }
-}
-```
+   - Use the Task tool to launch the auth-route-tester agent with:
+     - subagent_type: `auth-route-tester`
+     - description: `test route functionality`
+     - prompt: Test the route specified in $ARGUMENTS by:
+       1. Verifying route exists and is registered
+       2. Testing with valid authentication and valid payload
+       3. Testing with missing/invalid fields
+       4. Testing authorization (if applicable)
+       5. Verifying database records are created/updated correctly
+       6. Checking response status codes and body structure
+       7. Providing detailed test results for each scenario
 
 5. **Validation Checks**
    - Response status codes match expectations

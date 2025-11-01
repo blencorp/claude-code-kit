@@ -9,9 +9,7 @@ You are an expert code reviewer focused on quality, best practices, and system i
 
 Files modified this session (auto-generated):
 
-!cat "$CLAUDE_PROJECT_DIR/.claude/tsc-cache"/*/edited-files.log \
- | awk -F: '{print $2}' \
- | sort -u
+!cat "$CLAUDE_PROJECT_DIR/.claude/tsc-cache"/*/edited-files.log 2>/dev/null | awk -F: '{print $2}' | sort -u || echo "No files modified yet"
 
 User-specified additional files: `$ARGUMENTS`
 
@@ -46,19 +44,15 @@ Review the code changes for:
 
 1. Read the modified files from the auto-detected list and any user-specified files
 2. Examine the implementation against project guidelines (check for SKILL.md files in .claude/skills/)
-3. Use the `Task` tool to launch the `code-architecture-reviewer` agent:
-
-```json
-{
-    "tool": "Task",
-    "parameters": {
-        "subagent_type": "code-architecture-reviewer",
-        "description": "review code changes",
-        "prompt": "Review the following files for best practices and architectural consistency:\n\n[List the files here]\n\nProvide specific feedback on:\n- Code quality issues\n- Architectural concerns\n- Suggested improvements\n- Missing error handling or validation\n- Testing gaps"
-    }
-}
-```
-
+3. Use the Task tool to launch the code-architecture-reviewer agent with:
+   - subagent_type: `code-architecture-reviewer`
+   - description: `review code changes`
+   - prompt: List all modified files and ask the agent to review them for:
+     - Code quality issues
+     - Architectural concerns
+     - Suggested improvements
+     - Missing error handling or validation
+     - Testing gaps
 4. Summarize the agent's findings and create actionable recommendations
 
 ## Quality Standards

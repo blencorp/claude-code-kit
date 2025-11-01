@@ -13,10 +13,7 @@ We NEVER leave broken builds. Every change must compile cleanly.
 
 Services modified this session (auto-generated):
 
-!cat "$CLAUDE_PROJECT_DIR/.claude/tsc-cache"/*/edited-files.log \
- | awk -F: '{print $2}' \
- | grep -oE '^[^/]+' \
- | sort -u
+!cat "$CLAUDE_PROJECT_DIR/.claude/tsc-cache"/*/affected-repos.txt 2>/dev/null | sort -u || echo "No services modified yet"
 
 User-specified services: `$ARGUMENTS`
 
@@ -36,18 +33,14 @@ Build the project and fix all errors:
      - Capture all errors and warnings
 
 3. **Fix Errors Automatically**
-   - Use the `Task` tool to launch the `auto-error-resolver` agent:
-
-```json
-{
-    "tool": "Task",
-    "parameters": {
-        "subagent_type": "auto-error-resolver",
-        "description": "fix build errors",
-        "prompt": "Fix all TypeScript compilation errors in the following services:\n\n[List services and their errors here]\n\nRun the builds, analyze the errors, and fix them systematically. Verify each fix by running the build again."
-    }
-}
-```
+   - Use the Task tool to launch the auto-error-resolver agent with:
+     - subagent_type: `auto-error-resolver`
+     - description: `fix build errors`
+     - prompt: List all services with build errors and ask the agent to:
+       - Run the builds and analyze errors
+       - Fix errors systematically
+       - Verify each fix by re-running the build
+       - Continue until achieving zero errors
 
 4. **Verify Clean Build**
    - Re-run builds after fixes
