@@ -1,6 +1,28 @@
 # Claude Code CLI - Architecture & Design
 
-## Overview
+> **⚠️ IMPORTANT:** This document describes a **future TypeScript CLI implementation**. The current working implementation uses a bash script (`claude-setup`) with a **kit-based architecture**.
+
+## Current Implementation (v0.2.0)
+
+**What exists now:**
+- Bash script: `claude-setup` (bash-based installer)
+- Architecture: **Kits** (not plugins)
+- Location: `cli/kits/` directory
+- Auto-detection via `kit.json` files
+
+**Kit vs Skill (Current Model):**
+- **Kit** = Distribution package (contains skills + detection logic)
+- **Skill** = Knowledge document Claude reads (SKILL.md + resources/)
+- Kits live in `cli/kits/`, skills get installed to `.claude/skills/`
+- See [README.md Key Concepts](README.md#kits-vs-skills---understanding-the-architecture) for details
+
+---
+
+## Future Vision: TypeScript CLI with Plugin System
+
+Below is the **planned architecture** for a future TypeScript-based CLI tool that will replace the bash script with a more robust plugin system.
+
+### Overview
 
 A CLI tool to initialize and manage Claude Code infrastructure (skills, hooks, agents, commands) with framework-specific plugin support.
 

@@ -222,6 +222,38 @@ dev/
 
 ## Key Concepts
 
+### Kits vs Skills - Understanding the Architecture
+
+**Kit (Distribution Unit)** - A package for a specific technology:
+- **What:** Bundles everything related to one framework (React, Express, etc.)
+- **Where:** Lives in `cli/kits/react/` before installation
+- **Contains:** Skills + agents + commands + auto-detection logic
+- **Purpose:** Distribution and installation
+- **Example:** The `react` kit bundles the React skill, auto-detects React in package.json, and installs everything together
+
+**Skill (Knowledge Unit)** - The actual domain knowledge Claude reads:
+- **What:** Documentation that teaches Claude about a technology
+- **Where:** Lives in `.claude/skills/react/` after installation
+- **Contains:** SKILL.md + resources/ directory
+- **Purpose:** Provides Claude with domain expertise
+- **Example:** The `react` skill contains React patterns, hooks, and best practices
+
+**Relationship:**
+```
+Kit: react (cli/kits/react/)
+├── kit.json                    # Auto-detection: checks for "react" in package.json
+├── skills/react/               # → Installs to .claude/skills/react/
+│   ├── SKILL.md               # Claude reads this during sessions
+│   └── resources/             # Progressive disclosure content
+└── skill-rules.fragment.json  # → Merges into .claude/skills/skill-rules.json
+```
+
+**In Practice:**
+- You **install kits** via `npx claude-code-setup`
+- Claude **activates skills** based on your code
+- Most kits contain one skill, but some bundle multiple related skills
+- Core skills (like skill-developer) exist without a kit
+
 ### Hooks + skill-rules.json = Auto-Activation
 
 **The system:**
