@@ -84,22 +84,24 @@
           "app router",
           "app directory",
           "server component",
+          "client component",
           "server action",
           "generateMetadata",
           "generateStaticParams",
           "next/navigation",
           "next/link",
-          "page component",
-          "layout component",
-          "route handler"
+          "use client"
         ],
         "intentPatterns": [
-          "create.*(page|route|layout)",
-          "add.*(page|route|layout)",
+          "create.*(page|route|layout|component)",
+          "add.*(page|route|layout|component)",
+          "build.*component",
+          "make.*component",
           "add.*route.*handler",
           "create.*api.*route",
           "add.*server.*action",
           "create.*server.*component",
+          "create.*client.*component",
           "add.*metadata",
           "create.*loading.*state",
           "add.*error.*boundary",
@@ -108,12 +110,9 @@
       },
       "fileTriggers": {
         "pathPatterns": [
-          "**/app/**/page.tsx",
-          "**/app/**/layout.tsx",
-          "**/app/**/route.ts",
-          "**/app/**/loading.tsx",
-          "**/app/**/error.tsx",
-          "**/app/**/not-found.tsx",
+          "**/app/**/*.tsx",
+          "**/app/**/*.ts",
+          "**/components/**/*.tsx",
           "**/next.config.js",
           "**/next.config.mjs"
         ]
