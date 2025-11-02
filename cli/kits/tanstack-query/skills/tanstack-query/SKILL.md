@@ -7,7 +7,14 @@ description: TanStack Query v5 data fetching patterns including useSuspenseQuery
 
 ## Purpose
 
-Modern data fetching with TanStack Query v5, emphasizing Suspense-based queries, cache-first strategies, and centralized API services.
+Modern data fetching with TanStack Query v5 (latest: 5.90.5, November 2025), emphasizing Suspense-based queries, cache-first strategies, and centralized API services.
+
+**Note**: v5 (released October 2023) has breaking changes from v4:
+- `isLoading` → `isPending` for status
+- `cacheTime` → `gcTime` (garbage collection time)
+- React 18.0+ required
+- Callbacks removed from useQuery (onError, onSuccess, onSettled)
+- `keepPreviousData` replaced with `placeholderData` function
 
 ## When to Use This Skill
 
@@ -115,12 +122,12 @@ Use `useQuery` only when you need loading/error states in the component:
 import { useQuery } from '@tanstack/react-query';
 
 function Component() {
-  const { data, isLoading, error } = useQuery({
+  const { data, isPending, error } = useQuery({
     queryKey: ['posts'],
     queryFn: postsApi.getAll,
   });
 
-  if (isLoading) return <Spinner />;
+  if (isPending) return <Spinner />;
   if (error) return <Error error={error} />;
 
   return <div>{data.map(...)}</div>;
@@ -388,7 +395,7 @@ function DataComponent() {
 }
 ```
 
-### Retry Configuration
+### Retry and Cache Configuration
 
 ```typescript
 const { data } = useQuery({
@@ -396,6 +403,7 @@ const { data } = useQuery({
   queryFn: postsApi.getAll,
   retry: 3,              // Retry 3 times
   retryDelay: 1000,      // Wait 1s between retries
+  gcTime: 5 * 60 * 1000, // Garbage collection time: 5 minutes (v5: was 'cacheTime')
 });
 ```
 
@@ -418,8 +426,8 @@ function DataComponent() {
 
 // ❌ Avoid: useQuery with manual loading
 function DataComponent() {
-  const { data, isLoading } = useQuery({...});
-  if (isLoading) return <Spinner />;
+  const { data, isPending } = useQuery({...});
+  if (isPending) return <Spinner />;
   return <div>{data}</div>;
 }
 ```
