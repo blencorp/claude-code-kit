@@ -7,7 +7,7 @@ Install complete Claude Code infrastructure in 30 seconds with automatic framewo
 ## Quick Start
 
 ```bash
-npx @blen/claude-code-kit
+npx github:blencorp/claude-code-kit
 ```
 
 **What happens:**
@@ -39,7 +39,7 @@ When installed, kits make Claude Code an expert in your stack.
 
 | Kit | Description | Documentation |
 |-----|-------------|---------------|
-| **Next.js** | Next.js 14+ App Router, Server Components, Server Actions | [SKILL.md](cli/kits/nextjs/skills/nextjs/SKILL.md) |
+| **Next.js** | Next.js 15+ App Router, Server Components, Server Actions | [SKILL.md](cli/kits/nextjs/skills/nextjs/SKILL.md) |
 | **React** | React 19 hooks, Suspense, lazy loading, TypeScript patterns | [README](cli/kits/react/README.md) |
 | **shadcn/ui** | shadcn/ui component library with Tailwind CSS | [SKILL.md](cli/kits/shadcn/skills/shadcn/SKILL.md) |
 | **Tailwind CSS** | Tailwind v4 utilities, responsive design, theming | [SKILL.md](cli/kits/tailwindcss/skills/tailwindcss/SKILL.md) |
@@ -160,7 +160,7 @@ your-project/
 
 ```bash
 cd my-nextjs-app
-npx @blen/claude-code-kit
+npx github:blencorp/claude-code-kit
 ```
 
 **Detects:**
@@ -182,7 +182,7 @@ npx @blen/claude-code-kit
 
 ```bash
 cd my-api
-npx @blen/claude-code-kit
+npx github:blencorp/claude-code-kit
 ```
 
 **Detects:**
@@ -203,7 +203,7 @@ npx @blen/claude-code-kit
 
 ```bash
 cd my-fullstack-app
-npx @blen/claude-code-kit
+npx github:blencorp/claude-code-kit
 ```
 
 **Detects both frontend and backend kits automatically**
@@ -217,7 +217,7 @@ npx @blen/claude-code-kit
 ### Re-running to Add More Kits
 
 ```bash
-npx @blen/claude-code-kit
+npx github:blencorp/claude-code-kit
 ```
 
 **Detects:** Existing installation
@@ -411,7 +411,7 @@ claude-code-kit/
 Re-run the installer to update or add kits:
 
 ```bash
-npx @blen/claude-code-kit
+npx github:blencorp/claude-code-kit
 ```
 
 The installer detects existing installations and offers:
