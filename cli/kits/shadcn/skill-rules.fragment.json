@@ -1,0 +1,43 @@
+{
+  "skills": {
+    "shadcn": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": [
+          "shadcn",
+          "shadcn/ui",
+          "shadcn-ui",
+          "radix",
+          "radix-ui",
+          "ui component",
+          "form component",
+          "dialog",
+          "dropdown",
+          "toast"
+        ],
+        "intentPatterns": [
+          "(add|use|implement).*(shadcn|component|dialog|form)",
+          "ui component",
+          "(create|build).*(form|dialog|dropdown|menu)"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/components/ui/**/*.tsx",
+          "**/components/ui/**/*.ts",
+          "**/components.json"
+        ],
+        "contentPatterns": [
+          "from '@/components/ui/",
+          "import.*@/components/ui",
+          "from '@radix-ui/",
+          "import.*@radix-ui",
+          "cva\\(",
+          "cn\\("
+        ]
+      }
+    }
+  }
+}

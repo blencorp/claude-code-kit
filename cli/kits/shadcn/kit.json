@@ -1,0 +1,9 @@
+{
+  "name": "shadcn",
+  "displayName": "shadcn/ui",
+  "description": "shadcn/ui component patterns and best practices",
+  "version": "1.0.0",
+  "detect": {
+    "command": "[ -f components.json ] && grep -q 'shadcn' components.json 2>/dev/null || [ -d components/ui ] && ls components/ui/*.tsx &>/dev/null"
+  }
+}

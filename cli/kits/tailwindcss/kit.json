@@ -1,0 +1,9 @@
+{
+  "name": "tailwindcss",
+  "displayName": "Tailwind CSS",
+  "description": "Tailwind CSS utility patterns and best practices",
+  "version": "1.0.0",
+  "detect": {
+    "command": "grep -qE '\"tailwindcss\"|\"@tailwindcss\"' package.json 2>/dev/null || [ -f tailwind.config.js ] || [ -f tailwind.config.ts ]"
+  }
+}

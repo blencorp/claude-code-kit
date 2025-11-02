@@ -1,0 +1,9 @@
+{
+  "name": "nextjs",
+  "displayName": "Next.js",
+  "description": "Next.js 14+ App Router patterns and best practices",
+  "version": "1.0.0",
+  "detect": {
+    "command": "grep -qE '\"next\"|\"@next\"' package.json 2>/dev/null"
+  }
+}

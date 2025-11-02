@@ -1,0 +1,56 @@
+{
+  "skills": {
+    "nextjs": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": [
+          "next",
+          "nextjs",
+          "next.js",
+          "app router",
+          "server component",
+          "client component",
+          "server action",
+          "route handler",
+          "metadata",
+          "generateStaticParams",
+          "revalidate"
+        ],
+        "intentPatterns": [
+          "(create|build|implement).*(page|route|layout|next)",
+          "(next|nextjs).*(development|pattern|code)",
+          "(server|client) component",
+          "app router",
+          "data fetching.*next"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/app/**/page.tsx",
+          "**/app/**/layout.tsx",
+          "**/app/**/route.ts",
+          "**/app/**/loading.tsx",
+          "**/app/**/error.tsx",
+          "**/app/**/not-found.tsx",
+          "**/app/**/template.tsx",
+          "**/next.config.js",
+          "**/next.config.ts",
+          "**/next.config.mjs"
+        ],
+        "contentPatterns": [
+          "from 'next/",
+          "import.*next/",
+          "export const metadata",
+          "export async function generateMetadata",
+          "export async function generateStaticParams",
+          "'use server'",
+          "'use client'",
+          "NextRequest",
+          "NextResponse"
+        ]
+      }
+    }
+  }
+}
