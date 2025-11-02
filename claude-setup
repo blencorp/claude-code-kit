@@ -378,7 +378,8 @@ for kit in "${KITS_TO_INSTALL[@]}"; do
                 if [ -f "$fragment_file" ]; then
                     if command -v jq &> /dev/null; then
                         # Use jq to merge the fragment into skill-rules.json
-                        jq -s '.[0] * {"skills": (.[0].skills + .[1].skills)}' \
+                        # Fragment is structured as {"skill-name": {...}}, not {"skills": {...}}
+                        jq -s '.[0] * {"skills": (.[0].skills + .[1])}' \
                             .claude/skills/skill-rules.json "$fragment_file" > .claude/skills/skill-rules.tmp.json
                         mv .claude/skills/skill-rules.tmp.json .claude/skills/skill-rules.json
                     else

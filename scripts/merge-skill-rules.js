@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 const REPO_ROOT = path.join(__dirname, '..');
-const OUTPUT_FILE = path.join(REPO_ROOT, '.claude', 'skill-rules.json');
+const OUTPUT_FILE = path.join(REPO_ROOT, '.claude', 'skills', 'skill-rules.json');
 const KITS_DIR = path.join(REPO_ROOT, 'cli', 'kits');
 
 function findFragmentFiles() {
@@ -81,7 +81,7 @@ function mergeSkillRules() {
     JSON.stringify(skillRules, null, 2) + '\n'
   );
 
-  console.log(`✅ Merged ${Object.keys(skills).length} skill rules to .claude/skill-rules.json`);
+  console.log(`✅ Merged ${Object.keys(skills).length} skill rules to .claude/skills/skill-rules.json`);
   console.log(`\nSkills configured: ${Object.keys(skills).join(', ')}`);
 }
 
