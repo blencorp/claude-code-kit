@@ -1,30 +1,37 @@
 {
   "prisma": {
-    "intent_patterns": [
-      "create.*database.*model",
-      "add.*prisma.*schema",
-      "query.*database",
-      "create.*migration",
-      "update.*schema"
-    ],
-    "keyword_patterns": [
-      "prisma",
-      "prisma client",
-      "prisma schema",
-      "db.model",
-      "prisma migrate",
-      "@prisma/client"
-    ],
-    "content_patterns": [
-      "import.*@prisma/client",
-      "prisma\\.",
-      "db\\.",
-      "model.*\\{"
-    ],
-    "file_path_patterns": [
-      "**/prisma/schema.prisma",
-      "**/repositories/**/*.ts",
-      "**/db/**/*.ts"
-    ]
+    "type": "domain",
+    "enforcement": "suggest",
+    "priority": "medium",
+    "promptTriggers": {
+      "keywords": [
+        "prisma",
+        "prisma client",
+        "prisma schema",
+        "db.model",
+        "prisma migrate",
+        "@prisma/client"
+      ],
+      "intentPatterns": [
+        "create.*database.*model",
+        "add.*prisma.*schema",
+        "query.*database",
+        "create.*migration",
+        "update.*schema"
+      ]
+    },
+    "fileTriggers": {
+      "pathPatterns": [
+        "**/prisma/schema.prisma",
+        "**/repositories/**/*.ts",
+        "**/db/**/*.ts"
+      ],
+      "contentPatterns": [
+        "import.*@prisma/client",
+        "prisma\\.",
+        "db\\.",
+        "model.*\\{"
+      ]
+    }
   }
 }

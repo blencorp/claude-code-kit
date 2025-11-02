@@ -43,7 +43,7 @@ function mergeSkillRules() {
 
   console.log(`✅ Found ${fragmentFiles.length} fragments`);
 
-  const mergedRules = {};
+  const skills = {};
 
   for (const fragmentFile of fragmentFiles) {
     const fullPath = path.join(REPO_ROOT, fragmentFile);
@@ -53,8 +53,8 @@ function mergeSkillRules() {
       const content = fs.readFileSync(fullPath, 'utf8');
       const fragment = JSON.parse(content);
 
-      // Merge fragment into main rules
-      Object.assign(mergedRules, fragment);
+      // Merge fragment into skills object
+      Object.assign(skills, fragment);
     } catch (error) {
       console.error(`❌ Error reading ${fragmentFile}:`, error.message);
       process.exit(1);
@@ -69,14 +69,20 @@ function mergeSkillRules() {
     fs.mkdirSync(claudeDir, { recursive: true });
   }
 
+  // Create properly formatted skill-rules.json
+  const skillRules = {
+    version: "1.0",
+    skills: skills
+  };
+
   // Write merged rules
   fs.writeFileSync(
     OUTPUT_FILE,
-    JSON.stringify(mergedRules, null, 2) + '\n'
+    JSON.stringify(skillRules, null, 2) + '\n'
   );
 
-  console.log(`✅ Merged ${Object.keys(mergedRules).length} skill rules to .claude/skill-rules.json`);
-  console.log(`\nSkills configured: ${Object.keys(mergedRules).join(', ')}`);
+  console.log(`✅ Merged ${Object.keys(skills).length} skill rules to .claude/skill-rules.json`);
+  console.log(`\nSkills configured: ${Object.keys(skills).join(', ')}`);
 }
 
 if (require.main === module) {

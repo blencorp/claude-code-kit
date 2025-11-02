@@ -1,28 +1,35 @@
 {
   "nodejs": {
-    "intent_patterns": [
-      "create.*node.*server",
-      "implement.*async.*function",
-      "handle.*error",
-      "create.*service"
-    ],
-    "keyword_patterns": [
-      "node.js",
-      "nodejs",
-      "async/await",
-      "process.env",
-      "require(",
-      "module.exports"
-    ],
-    "content_patterns": [
-      "async.*function",
-      "await.*",
-      "process\\.env"
-    ],
-    "file_path_patterns": [
-      "**/services/**/*.ts",
-      "**/utils/**/*.ts",
-      "**/lib/**/*.ts"
-    ]
+    "type": "domain",
+    "enforcement": "suggest",
+    "priority": "low",
+    "promptTriggers": {
+      "keywords": [
+        "node.js",
+        "nodejs",
+        "async/await",
+        "process.env",
+        "require(",
+        "module.exports"
+      ],
+      "intentPatterns": [
+        "create.*node.*server",
+        "implement.*async.*function",
+        "handle.*error",
+        "create.*service"
+      ]
+    },
+    "fileTriggers": {
+      "pathPatterns": [
+        "**/services/**/*.ts",
+        "**/utils/**/*.ts",
+        "**/lib/**/*.ts"
+      ],
+      "contentPatterns": [
+        "async.*function",
+        "await.*",
+        "process\\.env"
+      ]
+    }
   }
 }

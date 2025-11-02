@@ -1,31 +1,38 @@
 {
   "mui": {
-    "intent_patterns": [
-      "style.*with.*mui",
-      "use.*mui.*component",
-      "create.*mui.*theme",
-      "customize.*mui"
-    ],
-    "keyword_patterns": [
-      "mui",
-      "material-ui",
-      "material ui",
-      "@mui/material",
-      "sx prop",
-      "theme",
-      "Box",
-      "Typography",
-      "Button"
-    ],
-    "content_patterns": [
-      "import.*@mui/material",
-      "sx=\\{",
-      "<Box",
-      "<Typography"
-    ],
-    "file_path_patterns": [
-      "**/*.styles.ts",
-      "**/*.styles.tsx"
-    ]
+    "type": "domain",
+    "enforcement": "suggest",
+    "priority": "medium",
+    "promptTriggers": {
+      "keywords": [
+        "mui",
+        "material-ui",
+        "material ui",
+        "@mui/material",
+        "sx prop",
+        "theme",
+        "Box",
+        "Typography",
+        "Button"
+      ],
+      "intentPatterns": [
+        "style.*with.*mui",
+        "use.*mui.*component",
+        "create.*mui.*theme",
+        "customize.*mui"
+      ]
+    },
+    "fileTriggers": {
+      "pathPatterns": [
+        "**/*.styles.ts",
+        "**/*.styles.tsx"
+      ],
+      "contentPatterns": [
+        "import.*@mui/material",
+        "sx=\\{",
+        "<Box",
+        "<Typography"
+      ]
+    }
   }
 }

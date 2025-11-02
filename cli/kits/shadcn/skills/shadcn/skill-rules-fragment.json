@@ -1,32 +1,34 @@
 {
   "shadcn": {
-    "intent_patterns": [
-      "create.*table",
-      "add.*table.*component",
-      "create.*form",
-      "add.*form.*component",
-      "create.*dialog",
-      "add.*dialog.*component",
-      "create.*card",
-      "add.*card.*component",
-      "add.*shadcn.*component",
-      "install.*shadcn.*component",
-      "create.*button",
-      "add.*button.*component",
-      "style.*component.*shadcn",
-      "use.*shadcn",
-      "create.*ui.*component"
-    ],
-    "keyword_patterns": [
-      "shadcn",
-      "shadcn/ui",
-      "npx shadcn",
-      "@/components/ui"
-    ],
-    "content_patterns": [],
-    "file_path_patterns": [
-      "**/components/ui/**",
-      "**/components.json"
-    ]
+    "type": "domain",
+    "enforcement": "suggest",
+    "priority": "high",
+    "promptTriggers": {
+      "keywords": [
+        "shadcn",
+        "shadcn/ui",
+        "npx shadcn",
+        "@/components/ui",
+        "table component",
+        "form component",
+        "dialog component",
+        "card component",
+        "button component"
+      ],
+      "intentPatterns": [
+        "create.*(table|form|dialog|card|button)",
+        "add.*(table|form|dialog|card|button).*component",
+        "add.*shadcn.*component",
+        "install.*shadcn.*component",
+        "style.*component.*shadcn",
+        "use.*shadcn"
+      ]
+    },
+    "fileTriggers": {
+      "pathPatterns": [
+        "**/components/ui/**",
+        "**/components.json"
+      ]
+    }
   }
 }

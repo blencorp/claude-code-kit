@@ -1,41 +1,48 @@
 {
   "nextjs": {
-    "intent_patterns": [
-      "create.*page",
-      "create.*route",
-      "add.*page",
-      "create.*layout",
-      "add.*route.*handler",
-      "create.*api.*route",
-      "add.*server.*action",
-      "create.*server.*component",
-      "add.*metadata",
-      "create.*loading.*state",
-      "add.*error.*boundary",
-      "implement.*dynamic.*route"
-    ],
-    "keyword_patterns": [
-      "next.js",
-      "nextjs",
-      "app router",
-      "app directory",
-      "server component",
-      "server action",
-      "generateMetadata",
-      "generateStaticParams",
-      "next/navigation",
-      "next/link"
-    ],
-    "content_patterns": [],
-    "file_path_patterns": [
-      "**/app/**/page.tsx",
-      "**/app/**/layout.tsx",
-      "**/app/**/route.ts",
-      "**/app/**/loading.tsx",
-      "**/app/**/error.tsx",
-      "**/app/**/not-found.tsx",
-      "**/next.config.js",
-      "**/next.config.mjs"
-    ]
+    "type": "domain",
+    "enforcement": "suggest",
+    "priority": "high",
+    "promptTriggers": {
+      "keywords": [
+        "next.js",
+        "nextjs",
+        "app router",
+        "app directory",
+        "server component",
+        "server action",
+        "generateMetadata",
+        "generateStaticParams",
+        "next/navigation",
+        "next/link",
+        "page component",
+        "layout component",
+        "route handler"
+      ],
+      "intentPatterns": [
+        "create.*(page|route|layout)",
+        "add.*(page|route|layout)",
+        "add.*route.*handler",
+        "create.*api.*route",
+        "add.*server.*action",
+        "create.*server.*component",
+        "add.*metadata",
+        "create.*loading.*state",
+        "add.*error.*boundary",
+        "implement.*dynamic.*route"
+      ]
+    },
+    "fileTriggers": {
+      "pathPatterns": [
+        "**/app/**/page.tsx",
+        "**/app/**/layout.tsx",
+        "**/app/**/route.ts",
+        "**/app/**/loading.tsx",
+        "**/app/**/error.tsx",
+        "**/app/**/not-found.tsx",
+        "**/next.config.js",
+        "**/next.config.mjs"
+      ]
+    }
   }
 }

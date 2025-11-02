@@ -1,36 +1,45 @@
 {
   "tanstack-query": {
-    "intent_patterns": [
-      "fetch.*data",
-      "query.*data",
-      "create.*mutation",
-      "invalidate.*cache",
-      "prefetch.*data",
-      "use.*suspense.*query",
-      "implement.*data.*fetching"
-    ],
-    "keyword_patterns": [
-      "tanstack query",
-      "react query",
-      "useQuery",
-      "useMutation",
-      "useSuspenseQuery",
-      "useQueryClient",
-      "queryKey",
-      "queryFn",
-      "@tanstack/react-query"
-    ],
-    "content_patterns": [
-      "useQuery\\(",
-      "useMutation\\(",
-      "useSuspenseQuery\\(",
-      "queryClient\\.",
-      "import.*@tanstack/react-query"
-    ],
-    "file_path_patterns": [
-      "**/api/**/*.ts",
-      "**/queries/**/*.ts",
-      "**/hooks/**/*.ts"
-    ]
+    "type": "domain",
+    "enforcement": "suggest",
+    "priority": "high",
+    "promptTriggers": {
+      "keywords": [
+        "tanstack query",
+        "react query",
+        "useQuery",
+        "useMutation",
+        "useSuspenseQuery",
+        "useQueryClient",
+        "queryKey",
+        "queryFn",
+        "@tanstack/react-query",
+        "fetch data",
+        "data fetching"
+      ],
+      "intentPatterns": [
+        "fetch.*data",
+        "query.*data",
+        "create.*mutation",
+        "invalidate.*cache",
+        "prefetch.*data",
+        "use.*suspense.*query",
+        "implement.*data.*fetching"
+      ]
+    },
+    "fileTriggers": {
+      "pathPatterns": [
+        "**/api/**/*.ts",
+        "**/queries/**/*.ts",
+        "**/hooks/**/*.ts"
+      ],
+      "contentPatterns": [
+        "useQuery\\(",
+        "useMutation\\(",
+        "useSuspenseQuery\\(",
+        "queryClient\\.",
+        "import.*@tanstack/react-query"
+      ]
+    }
   }
 }

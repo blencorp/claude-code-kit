@@ -1,312 +1,377 @@
 {
-  "express": {
-    "intent_patterns": [
-      "create.*express.*route",
-      "add.*express.*middleware",
-      "create.*api.*endpoint",
-      "implement.*controller"
-    ],
-    "keyword_patterns": [
-      "express",
-      "express.Router",
-      "app.get",
-      "app.post",
-      "middleware",
-      "req.body",
-      "res.json"
-    ],
-    "content_patterns": [
-      "import.*express",
-      "Router\\(\\)",
-      "app\\.(get|post|put|delete)"
-    ],
-    "file_path_patterns": [
-      "**/routes/**/*.ts",
-      "**/controllers/**/*.ts",
-      "**/middleware/**/*.ts",
-      "**/app.ts",
-      "**/server.ts"
-    ]
-  },
-  "mui": {
-    "intent_patterns": [
-      "style.*with.*mui",
-      "use.*mui.*component",
-      "create.*mui.*theme",
-      "customize.*mui"
-    ],
-    "keyword_patterns": [
-      "mui",
-      "material-ui",
-      "material ui",
-      "@mui/material",
-      "sx prop",
-      "theme",
-      "Box",
-      "Typography",
-      "Button"
-    ],
-    "content_patterns": [
-      "import.*@mui/material",
-      "sx=\\{",
-      "<Box",
-      "<Typography"
-    ],
-    "file_path_patterns": [
-      "**/*.styles.ts",
-      "**/*.styles.tsx"
-    ]
-  },
-  "nextjs": {
-    "intent_patterns": [
-      "create.*page",
-      "create.*route",
-      "add.*page",
-      "create.*layout",
-      "add.*route.*handler",
-      "create.*api.*route",
-      "add.*server.*action",
-      "create.*server.*component",
-      "add.*metadata",
-      "create.*loading.*state",
-      "add.*error.*boundary",
-      "implement.*dynamic.*route"
-    ],
-    "keyword_patterns": [
-      "next.js",
-      "nextjs",
-      "app router",
-      "app directory",
-      "server component",
-      "server action",
-      "generateMetadata",
-      "generateStaticParams",
-      "next/navigation",
-      "next/link"
-    ],
-    "content_patterns": [],
-    "file_path_patterns": [
-      "**/app/**/page.tsx",
-      "**/app/**/layout.tsx",
-      "**/app/**/route.ts",
-      "**/app/**/loading.tsx",
-      "**/app/**/error.tsx",
-      "**/app/**/not-found.tsx",
-      "**/next.config.js",
-      "**/next.config.mjs"
-    ]
-  },
-  "nodejs": {
-    "intent_patterns": [
-      "create.*node.*server",
-      "implement.*async.*function",
-      "handle.*error",
-      "create.*service"
-    ],
-    "keyword_patterns": [
-      "node.js",
-      "nodejs",
-      "async/await",
-      "process.env",
-      "require(",
-      "module.exports"
-    ],
-    "content_patterns": [
-      "async.*function",
-      "await.*",
-      "process\\.env"
-    ],
-    "file_path_patterns": [
-      "**/services/**/*.ts",
-      "**/utils/**/*.ts",
-      "**/lib/**/*.ts"
-    ]
-  },
-  "prisma": {
-    "intent_patterns": [
-      "create.*database.*model",
-      "add.*prisma.*schema",
-      "query.*database",
-      "create.*migration",
-      "update.*schema"
-    ],
-    "keyword_patterns": [
-      "prisma",
-      "prisma client",
-      "prisma schema",
-      "db.model",
-      "prisma migrate",
-      "@prisma/client"
-    ],
-    "content_patterns": [
-      "import.*@prisma/client",
-      "prisma\\.",
-      "db\\.",
-      "model.*\\{"
-    ],
-    "file_path_patterns": [
-      "**/prisma/schema.prisma",
-      "**/repositories/**/*.ts",
-      "**/db/**/*.ts"
-    ]
-  },
-  "react": {
-    "intent_patterns": [
-      "create.*component",
-      "add.*component",
-      "create.*react.*component",
-      "use.*hook",
-      "implement.*useState",
-      "implement.*useEffect",
-      "add.*lazy.*loading",
-      "create.*suspense.*boundary",
-      "optimize.*component",
-      "memoize.*component"
-    ],
-    "keyword_patterns": [
-      "react",
-      "useState",
-      "useEffect",
-      "useCallback",
-      "useMemo",
-      "useRef",
-      "React.lazy",
-      "Suspense",
-      "react component",
-      "functional component"
-    ],
-    "content_patterns": [
-      "import.*from ['\"]react['\"]",
-      "useState<",
-      "useEffect\\(",
-      "React\\.FC"
-    ],
-    "file_path_patterns": [
-      "**/*.tsx",
-      "**/*.jsx",
-      "**/components/**/*.ts",
-      "**/features/**/*.tsx"
-    ]
-  },
-  "shadcn": {
-    "intent_patterns": [
-      "create.*table",
-      "add.*table.*component",
-      "create.*form",
-      "add.*form.*component",
-      "create.*dialog",
-      "add.*dialog.*component",
-      "create.*card",
-      "add.*card.*component",
-      "add.*shadcn.*component",
-      "install.*shadcn.*component",
-      "create.*button",
-      "add.*button.*component",
-      "style.*component.*shadcn",
-      "use.*shadcn",
-      "create.*ui.*component"
-    ],
-    "keyword_patterns": [
-      "shadcn",
-      "shadcn/ui",
-      "npx shadcn",
-      "@/components/ui"
-    ],
-    "content_patterns": [],
-    "file_path_patterns": [
-      "**/components/ui/**",
-      "**/components.json"
-    ]
-  },
-  "tailwindcss": {
-    "intent_patterns": [
-      "style.*with.*tailwind",
-      "add.*tailwind.*classes",
-      "configure.*tailwind",
-      "setup.*tailwind",
-      "customize.*theme",
-      "add.*dark.*mode",
-      "style.*component"
-    ],
-    "keyword_patterns": [
-      "tailwind",
-      "tailwindcss",
-      "className=",
-      "utility classes",
-      "@apply",
-      "tailwind.config"
-    ],
-    "content_patterns": [
-      "className=['\"].*flex",
-      "className=['\"].*grid",
-      "className=['\"].*bg-",
-      "className=['\"].*text-",
-      "@apply"
-    ],
-    "file_path_patterns": [
-      "**/tailwind.config.js",
-      "**/tailwind.config.ts",
-      "**/globals.css",
-      "**/*.css"
-    ]
-  },
-  "tanstack-query": {
-    "intent_patterns": [
-      "fetch.*data",
-      "query.*data",
-      "create.*mutation",
-      "invalidate.*cache",
-      "prefetch.*data",
-      "use.*suspense.*query",
-      "implement.*data.*fetching"
-    ],
-    "keyword_patterns": [
-      "tanstack query",
-      "react query",
-      "useQuery",
-      "useMutation",
-      "useSuspenseQuery",
-      "useQueryClient",
-      "queryKey",
-      "queryFn",
-      "@tanstack/react-query"
-    ],
-    "content_patterns": [
-      "useQuery\\(",
-      "useMutation\\(",
-      "useSuspenseQuery\\(",
-      "queryClient\\.",
-      "import.*@tanstack/react-query"
-    ],
-    "file_path_patterns": [
-      "**/api/**/*.ts",
-      "**/queries/**/*.ts",
-      "**/hooks/**/*.ts"
-    ]
-  },
-  "tanstack-router": {
-    "intent_patterns": [
-      "create.*route",
-      "add.*route",
-      "implement.*navigation",
-      "create.*loader",
-      "add.*route.*parameter"
-    ],
-    "keyword_patterns": [
-      "tanstack router",
-      "createFileRoute",
-      "useNavigate",
-      "useParams",
-      "route loader",
-      "@tanstack/react-router"
-    ],
-    "content_patterns": [
-      "createFileRoute\\(",
-      "import.*@tanstack/react-router"
-    ],
-    "file_path_patterns": [
-      "**/routes/**/*.tsx",
-      "**/routes/**/*.ts"
-    ]
+  "version": "1.0",
+  "skills": {
+    "express": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "promptTriggers": {
+        "keywords": [
+          "express",
+          "express.Router",
+          "app.get",
+          "app.post",
+          "middleware",
+          "req.body",
+          "res.json"
+        ],
+        "intentPatterns": [
+          "create.*express.*route",
+          "add.*express.*middleware",
+          "create.*api.*endpoint",
+          "implement.*controller"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/routes/**/*.ts",
+          "**/controllers/**/*.ts",
+          "**/middleware/**/*.ts",
+          "**/app.ts",
+          "**/server.ts"
+        ],
+        "contentPatterns": [
+          "import.*express",
+          "Router\\(\\)",
+          "app\\.(get|post|put|delete)"
+        ]
+      }
+    },
+    "mui": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "promptTriggers": {
+        "keywords": [
+          "mui",
+          "material-ui",
+          "material ui",
+          "@mui/material",
+          "sx prop",
+          "theme",
+          "Box",
+          "Typography",
+          "Button"
+        ],
+        "intentPatterns": [
+          "style.*with.*mui",
+          "use.*mui.*component",
+          "create.*mui.*theme",
+          "customize.*mui"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/*.styles.ts",
+          "**/*.styles.tsx"
+        ],
+        "contentPatterns": [
+          "import.*@mui/material",
+          "sx=\\{",
+          "<Box",
+          "<Typography"
+        ]
+      }
+    },
+    "nextjs": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": [
+          "next.js",
+          "nextjs",
+          "app router",
+          "app directory",
+          "server component",
+          "server action",
+          "generateMetadata",
+          "generateStaticParams",
+          "next/navigation",
+          "next/link",
+          "page component",
+          "layout component",
+          "route handler"
+        ],
+        "intentPatterns": [
+          "create.*(page|route|layout)",
+          "add.*(page|route|layout)",
+          "add.*route.*handler",
+          "create.*api.*route",
+          "add.*server.*action",
+          "create.*server.*component",
+          "add.*metadata",
+          "create.*loading.*state",
+          "add.*error.*boundary",
+          "implement.*dynamic.*route"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/app/**/page.tsx",
+          "**/app/**/layout.tsx",
+          "**/app/**/route.ts",
+          "**/app/**/loading.tsx",
+          "**/app/**/error.tsx",
+          "**/app/**/not-found.tsx",
+          "**/next.config.js",
+          "**/next.config.mjs"
+        ]
+      }
+    },
+    "nodejs": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "low",
+      "promptTriggers": {
+        "keywords": [
+          "node.js",
+          "nodejs",
+          "async/await",
+          "process.env",
+          "require(",
+          "module.exports"
+        ],
+        "intentPatterns": [
+          "create.*node.*server",
+          "implement.*async.*function",
+          "handle.*error",
+          "create.*service"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/services/**/*.ts",
+          "**/utils/**/*.ts",
+          "**/lib/**/*.ts"
+        ],
+        "contentPatterns": [
+          "async.*function",
+          "await.*",
+          "process\\.env"
+        ]
+      }
+    },
+    "prisma": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "promptTriggers": {
+        "keywords": [
+          "prisma",
+          "prisma client",
+          "prisma schema",
+          "db.model",
+          "prisma migrate",
+          "@prisma/client"
+        ],
+        "intentPatterns": [
+          "create.*database.*model",
+          "add.*prisma.*schema",
+          "query.*database",
+          "create.*migration",
+          "update.*schema"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/prisma/schema.prisma",
+          "**/repositories/**/*.ts",
+          "**/db/**/*.ts"
+        ],
+        "contentPatterns": [
+          "import.*@prisma/client",
+          "prisma\\.",
+          "db\\.",
+          "model.*\\{"
+        ]
+      }
+    },
+    "react": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "promptTriggers": {
+        "keywords": [
+          "react",
+          "useState",
+          "useEffect",
+          "useCallback",
+          "useMemo",
+          "useRef",
+          "React.lazy",
+          "Suspense",
+          "react component",
+          "functional component"
+        ],
+        "intentPatterns": [
+          "create.*(component|react.*component)",
+          "add.*component",
+          "use.*hook",
+          "implement.*(useState|useEffect|useCallback|useMemo)",
+          "add.*lazy.*loading",
+          "create.*suspense.*boundary",
+          "optimize.*component",
+          "memoize.*component"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/*.tsx",
+          "**/*.jsx",
+          "**/components/**/*.ts",
+          "**/features/**/*.tsx"
+        ],
+        "contentPatterns": [
+          "import.*from ['\"]react['\"]",
+          "useState<",
+          "useEffect\\("
+        ]
+      }
+    },
+    "shadcn": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": [
+          "shadcn",
+          "shadcn/ui",
+          "npx shadcn",
+          "@/components/ui",
+          "table component",
+          "form component",
+          "dialog component",
+          "card component",
+          "button component"
+        ],
+        "intentPatterns": [
+          "create.*(table|form|dialog|card|button)",
+          "add.*(table|form|dialog|card|button).*component",
+          "add.*shadcn.*component",
+          "install.*shadcn.*component",
+          "style.*component.*shadcn",
+          "use.*shadcn"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/components/ui/**",
+          "**/components.json"
+        ]
+      }
+    },
+    "tailwindcss": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "medium",
+      "promptTriggers": {
+        "keywords": [
+          "tailwind",
+          "tailwindcss",
+          "utility classes",
+          "@apply",
+          "tailwind.config",
+          "dark mode"
+        ],
+        "intentPatterns": [
+          "style.*with.*tailwind",
+          "add.*tailwind.*classes",
+          "configure.*tailwind",
+          "setup.*tailwind",
+          "customize.*theme",
+          "add.*dark.*mode"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/tailwind.config.js",
+          "**/tailwind.config.ts",
+          "**/globals.css",
+          "**/*.css"
+        ],
+        "contentPatterns": [
+          "className=['\"].*flex",
+          "className=['\"].*grid",
+          "className=['\"].*bg-",
+          "@apply"
+        ]
+      }
+    },
+    "tanstack-query": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": [
+          "tanstack query",
+          "react query",
+          "useQuery",
+          "useMutation",
+          "useSuspenseQuery",
+          "useQueryClient",
+          "queryKey",
+          "queryFn",
+          "@tanstack/react-query",
+          "fetch data",
+          "data fetching"
+        ],
+        "intentPatterns": [
+          "fetch.*data",
+          "query.*data",
+          "create.*mutation",
+          "invalidate.*cache",
+          "prefetch.*data",
+          "use.*suspense.*query",
+          "implement.*data.*fetching"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/api/**/*.ts",
+          "**/queries/**/*.ts",
+          "**/hooks/**/*.ts"
+        ],
+        "contentPatterns": [
+          "useQuery\\(",
+          "useMutation\\(",
+          "useSuspenseQuery\\(",
+          "queryClient\\.",
+          "import.*@tanstack/react-query"
+        ]
+      }
+    },
+    "tanstack-router": {
+      "type": "domain",
+      "enforcement": "suggest",
+      "priority": "high",
+      "promptTriggers": {
+        "keywords": [
+          "tanstack router",
+          "createFileRoute",
+          "useNavigate",
+          "useParams",
+          "route loader",
+          "@tanstack/react-router"
+        ],
+        "intentPatterns": [
+          "create.*route",
+          "add.*route",
+          "implement.*navigation",
+          "create.*loader",
+          "add.*route.*parameter"
+        ]
+      },
+      "fileTriggers": {
+        "pathPatterns": [
+          "**/routes/**/*.tsx",
+          "**/routes/**/*.ts"
+        ],
+        "contentPatterns": [
+          "createFileRoute\\(",
+          "import.*@tanstack/react-router"
+        ]
+      }
+    }
   }
 }
