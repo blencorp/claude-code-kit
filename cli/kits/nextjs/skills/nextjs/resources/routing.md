@@ -121,11 +121,12 @@ export default function NotFound() {
 ```typescript
 // app/posts/[id]/page.tsx
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-export default function PostPage({ params }: PageProps) {
-  return <div>Post ID: {params.id}</div>;
+export default async function PostPage({ params }: PageProps) {
+  const { id } = await params;
+  return <div>Post ID: {id}</div>;
 }
 ```
 
@@ -134,16 +135,17 @@ export default function PostPage({ params }: PageProps) {
 ```typescript
 // app/posts/[category]/[slug]/page.tsx
 interface PageProps {
-  params: {
+  params: Promise<{
     category: string;
     slug: string;
-  };
+  }>;
 }
 
-export default function PostPage({ params }: PageProps) {
+export default async function PostPage({ params }: PageProps) {
+  const { category, slug } = await params;
   return (
     <div>
-      Category: {params.category}, Slug: {params.slug}
+      Category: {category}, Slug: {slug}
     </div>
   );
 }
@@ -154,12 +156,13 @@ export default function PostPage({ params }: PageProps) {
 ```typescript
 // app/docs/[...slug]/page.tsx
 interface PageProps {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 }
 
-export default function DocsPage({ params }: PageProps) {
-  // /docs/a/b/c -> params.slug = ['a', 'b', 'c']
-  return <div>Path: {params.slug.join('/')}</div>;
+export default async function DocsPage({ params }: PageProps) {
+  const { slug } = await params;
+  // /docs/a/b/c -> slug = ['a', 'b', 'c']
+  return <div>Path: {slug.join('/')}</div>;
 }
 ```
 
@@ -168,14 +171,15 @@ export default function DocsPage({ params }: PageProps) {
 ```typescript
 // app/shop/[[...categories]]/page.tsx
 interface PageProps {
-  params: { categories?: string[] };
+  params: Promise<{ categories?: string[] }>;
 }
 
-export default function ShopPage({ params }: PageProps) {
-  // /shop -> params.categories = undefined
-  // /shop/clothes -> params.categories = ['clothes']
-  // /shop/clothes/shirts -> params.categories = ['clothes', 'shirts']
-  return <div>Categories: {params.categories?.join('/') || 'All'}</div>;
+export default async function ShopPage({ params }: PageProps) {
+  const { categories } = await params;
+  // /shop -> categories = undefined
+  // /shop/clothes -> categories = ['clothes']
+  // /shop/clothes/shirts -> categories = ['clothes', 'shirts']
+  return <div>Categories: {categories?.join('/') || 'All'}</div>;
 }
 ```
 
@@ -269,13 +273,23 @@ app/
 
 ```typescript
 // app/@modal/(..)photo/[id]/page.tsx
-export default function PhotoModal({ params }: { params: { id: string } }) {
-  return <Modal><Photo id={params.id} /></Modal>;
+export default async function PhotoModal({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+  return <Modal><Photo id={id} /></Modal>;
 }
 
 // app/photo/[id]/page.tsx (for direct navigation)
-export default function PhotoPage({ params }: { params: { id: string } }) {
-  return <Photo id={params.id} />;
+export default async function PhotoPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+  return <Photo id={id} />;
 }
 ```
 
@@ -477,8 +491,13 @@ export function middleware(request: NextRequest) {
 ```typescript
 import { redirect } from 'next/navigation';
 
-export default async function PostPage({ params }: { params: { id: string } }) {
-  const post = await getPost(params.id);
+export default async function PostPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+  const post = await getPost(id);
 
   if (!post.published) {
     redirect('/posts');
@@ -509,8 +528,13 @@ export async function createPost(formData: FormData) {
 ```typescript
 import { permanentRedirect } from 'next/navigation';
 
-export default async function OldPostPage({ params }: { params: { id: string } }) {
-  permanentRedirect(`/posts/${params.id}`);
+export default async function OldPostPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+  permanentRedirect(`/posts/${id}`);
 }
 ```
 

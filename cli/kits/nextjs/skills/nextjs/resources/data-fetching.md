@@ -121,8 +121,13 @@ export default async function Dashboard() {
 When data depends on previous results:
 
 ```typescript
-export default async function PostPage({ params }: { params: { id: string } }) {
-  const post = await getPost(params.id);
+export default async function PostPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+  const post = await getPost(id);
 
   // Wait for post before fetching author
   const author = await getAuthor(post.authorId);
@@ -283,9 +288,14 @@ export default async function PostsPage() {
 ### With try-catch
 
 ```typescript
-export default async function PostPage({ params }: { params: { id: string } }) {
+export default async function PostPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
   try {
-    const post = await getPost(params.id);
+    const post = await getPost(id);
     return <Post data={post} />;
   } catch (error) {
     if (error instanceof NotFoundError) {
@@ -301,8 +311,13 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 ```typescript
 import { notFound } from 'next/navigation';
 
-export default async function PostPage({ params }: { params: { id: string } }) {
-  const post = await getPost(params.id);
+export default async function PostPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+  const post = await getPost(id);
 
   if (!post) {
     notFound(); // Renders not-found.tsx
@@ -318,12 +333,13 @@ export default async function PostPage({ params }: { params: { id: string } }) {
 
 ```typescript
 interface PageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function PostsPage({ searchParams }: PageProps) {
-  const query = searchParams.q as string | undefined;
-  const category = searchParams.category as string | undefined;
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams.q as string | undefined;
+  const category = resolvedSearchParams.category as string | undefined;
 
   const posts = await getPosts({
     query,
@@ -343,7 +359,8 @@ export default async function PostsPage({ searchParams }: PageProps) {
 
 ```typescript
 export default async function PostsPage({ searchParams }: PageProps) {
-  const page = Number(searchParams.page) || 1;
+  const resolvedSearchParams = await searchParams;
+  const page = Number(resolvedSearchParams.page) || 1;
   const limit = 10;
 
   const [posts, total] = await Promise.all([
@@ -376,8 +393,13 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function PostPage({ params }: { params: { id: string } }) {
-  const post = await getPost(params.id);
+export default async function PostPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+  const post = await getPost(id);
   return <Post data={post} />;
 }
 ```

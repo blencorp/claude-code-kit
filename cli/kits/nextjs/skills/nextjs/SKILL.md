@@ -1,13 +1,13 @@
 ---
 name: nextjs
 displayName: Next.js
-description: Next.js 14+ App Router development patterns
+description: Next.js 15+ App Router development patterns
 version: 1.0.0
 ---
 
 # Next.js Development Guidelines
 
-Development patterns for Next.js 14+ using the App Router, Server Components, and modern data fetching.
+Development patterns for Next.js 15+ using the App Router, Server Components, and modern data fetching.
 
 ## Core Principles
 
@@ -77,12 +77,13 @@ import { getPost } from '@/lib/api';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export async function generateMetadata({ params }: PageProps) {
-  const post = await getPost(params.id);
+  const { id } = await params;
+  const post = await getPost(id);
   return {
     title: post.title,
     description: post.excerpt
@@ -90,7 +91,8 @@ export async function generateMetadata({ params }: PageProps) {
 }
 
 export default async function PostPage({ params }: PageProps) {
-  const post = await getPost(params.id);
+  const { id } = await params;
+  const post = await getPost(id);
 
   if (!post) {
     notFound();
@@ -436,7 +438,8 @@ export const metadata = {
 
 // Dynamic metadata
 export async function generateMetadata({ params }: PageProps) {
-  const post = await getPost(params.id);
+  const { id } = await params;
+  const post = await getPost(id);
   return {
     title: post.title,
     description: post.excerpt
@@ -477,8 +480,13 @@ export async function generateStaticParams() {
 // Revalidate every hour (ISR)
 export const revalidate = 3600;
 
-export default async function PostPage({ params }: { params: { id: string } }) {
-  const post = await getPost(params.id);
+export default async function PostPage({
+  params
+}: {
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params;
+  const post = await getPost(id);
   return <Post data={post} />;
 }
 ```
