@@ -140,7 +140,38 @@ if [ -d "$TEMPLATE_DIR/kits" ]; then
     done
 fi
 
-# Function to run detection in root and common monorepo subdirectories
+# Function to extract workspace paths from package.json
+get_workspace_paths() {
+    local paths=""
+
+    # Try to use jq if available for accurate parsing
+    if command -v jq &> /dev/null; then
+        # Handle both array format: {"workspaces": ["apps/*"]}
+        # and object format: {"workspaces": {"packages": ["apps/*"]}}
+        paths=$(jq -r '
+            if .workspaces then
+                if (.workspaces | type) == "array" then
+                    .workspaces[]
+                elif (.workspaces | type) == "object" and .workspaces.packages then
+                    .workspaces.packages[]
+                else
+                    empty
+                end
+            else
+                empty
+            end
+        ' package.json 2>/dev/null)
+    fi
+
+    # Fallback: Use expanded common patterns if jq not available or no workspaces found
+    if [ -z "$paths" ]; then
+        paths="apps/* packages/* services/* libs/* modules/* tools/* internal/* components/*"
+    fi
+
+    echo "$paths"
+}
+
+# Function to run detection in root and monorepo subdirectories
 run_detection_multipath() {
     local detect_cmd="$1"
 
@@ -151,12 +182,17 @@ run_detection_multipath() {
 
     # Check if this is a monorepo (has workspaces configuration)
     if [ -f package.json ] && grep -q '"workspaces"' package.json 2>/dev/null; then
-        # Search common monorepo patterns: apps/*, packages/*, services/*
-        for subdir in apps/* packages/* services/*; do
-            if [ -d "$subdir" ]; then
-                # Run detection in subdirectory (use subshell to preserve cwd)
-                (cd "$subdir" && eval "$detect_cmd" 2>/dev/null) && return 0
-            fi
+        # Get workspace paths (parsed from config or fallback patterns)
+        local workspace_paths=$(get_workspace_paths)
+
+        # Search each workspace path pattern
+        for pattern in $workspace_paths; do
+            for subdir in $pattern; do
+                if [ -d "$subdir" ]; then
+                    # Run detection in subdirectory (use subshell to preserve cwd)
+                    (cd "$subdir" && eval "$detect_cmd" 2>/dev/null) && return 0
+                fi
+            done
         done
     fi
 
@@ -173,8 +209,9 @@ for kit_name in "${ALL_KITS[@]}"; do
         if command -v jq &> /dev/null; then
             detect_cmd=$(jq -r '.detect.command // ""' "$kit_json" 2>/dev/null)
         else
-            # Fallback: simple grep extraction
-            detect_cmd=$(grep -o '"command"[[:space:]]*:[[:space:]]*"[^"]*"' "$kit_json" | sed 's/.*"\([^"]*\)".*/\1/' || echo "")
+            # Fallback: extract command field (less reliable, install jq for best results)
+            # Extract from opening quote to last quote on line, handling escaped quotes inside
+            detect_cmd=$(grep '"command"' "$kit_json" | sed -n 's/.*"command"[[:space:]]*:[[:space:]]*"\(.*\)"[^"]*$/\1/p' || echo "")
         fi
 
         # Run detection command (monorepo-aware)
