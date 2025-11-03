@@ -1,0 +1,43 @@
+{
+  "auto-error-resolver": {
+    "type": "workflow",
+    "activation": "suggest",
+    "priority": "critical",
+    "promptTriggers": {
+      "keywords": [
+        "build error",
+        "build errors",
+        "compilation error",
+        "compilation errors",
+        "typescript error",
+        "typescript errors",
+        "tsc error",
+        "build fail",
+        "build failed",
+        "build failing",
+        "fix errors",
+        "fix build",
+        "resolve errors",
+        "errors in build"
+      ],
+      "intentPatterns": [
+        "(fix|resolve|solve).*(build|compilation|typescript|tsc).*(error|errors|issue)",
+        "(build|compilation).*(fail|failed|failing|broken)",
+        "(typescript|tsc).*(error|errors|issue).*( in | with )",
+        "\\d+.*(error|errors).*(found|detected|in)",
+        "(clean|fix).*(build|compilation)"
+      ]
+    },
+    "errorTriggers": {
+      "enabled": true,
+      "patterns": [
+        "TS\\d{4}:",
+        "error TS\\d{4}:",
+        "Type error:",
+        "build failed",
+        "Compilation failed"
+      ],
+      "description": "Automatically suggest when TypeScript or build errors are detected"
+    }
+  }
+}
