@@ -140,6 +140,29 @@ if [ -d "$TEMPLATE_DIR/kits" ]; then
     done
 fi
 
+# Function to run detection in root and common monorepo subdirectories
+run_detection_multipath() {
+    local detect_cmd="$1"
+
+    # Fast path: Try root directory first (single-service projects)
+    if eval "$detect_cmd" 2>/dev/null; then
+        return 0
+    fi
+
+    # Check if this is a monorepo (has workspaces configuration)
+    if [ -f package.json ] && grep -q '"workspaces"' package.json 2>/dev/null; then
+        # Search common monorepo patterns: apps/*, packages/*, services/*
+        for subdir in apps/* packages/* services/*; do
+            if [ -d "$subdir" ]; then
+                # Run detection in subdirectory (use subshell to preserve cwd)
+                (cd "$subdir" && eval "$detect_cmd" 2>/dev/null) && return 0
+            fi
+        done
+    fi
+
+    return 1
+}
+
 # Detect which kits match the project
 for kit_name in "${ALL_KITS[@]}"; do
     kit_dir="$TEMPLATE_DIR/kits/$kit_name"
@@ -154,9 +177,9 @@ for kit_name in "${ALL_KITS[@]}"; do
             detect_cmd=$(grep -o '"command"[[:space:]]*:[[:space:]]*"[^"]*"' "$kit_json" | sed 's/.*"\([^"]*\)".*/\1/' || echo "")
         fi
 
-        # Run detection command
+        # Run detection command (monorepo-aware)
         if [ -n "$detect_cmd" ]; then
-            if eval "$detect_cmd" 2>/dev/null; then
+            if run_detection_multipath "$detect_cmd"; then
                 DETECTED_KITS+=("$kit_name")
                 display_name=$(get_display_name "$kit_dir")
                 echo -e "${GREEN}✓${NC} Detected: $display_name"
