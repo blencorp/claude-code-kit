@@ -1,6 +1,6 @@
 ---
 name: auto-error-resolver
-description: Use this agent when you need to automatically resolve TypeScript compilation errors, build errors, or other systematic code errors. This agent runs builds, analyzes error messages, fixes issues systematically, and verifies fixes by re-running builds until achieving zero errors. Examples:\n\n<example>\nContext: Build failed with multiple TypeScript errors\nuser: "The build is failing with TypeScript errors"\nassistant: "I'll use the auto-error-resolver agent to systematically fix all compilation errors"\n<commentary>\nSince there are build/compilation errors that need systematic fixing, use the auto-error-resolver agent to resolve them.\n</commentary>\n</example>\n\n<example>\nContext: tsc-check hook detected compilation errors\nuser: "There are 15 TypeScript errors in the form service"\nassistant: "Let me use the auto-error-resolver agent to fix these TypeScript errors"\n<commentary>\nMultiple TypeScript errors detected - use auto-error-resolver to fix them systematically.\n</commentary>\n</example>\n\n<example>\nContext: User triggered /build-and-fix command\nuser: "/build-and-fix"\nassistant: "I'll use the auto-error-resolver agent to build and fix all errors"\n<commentary>\nThe build-and-fix command requires the auto-error-resolver agent to handle error fixing.\n</commentary>\n</example>
+description: Automatically resolve TypeScript compilation and build errors systematically
 model: sonnet
 color: red
 ---
