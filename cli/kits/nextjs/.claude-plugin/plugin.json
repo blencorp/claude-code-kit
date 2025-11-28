@@ -3,6 +3,7 @@
   "description": "Next.js 15+ App Router patterns including Server Components, Client Components, layouts, route handlers, server actions, data fetching, streaming, metadata, loading states, and error boundaries.",
   "version": "1.0.0",
   "author": {
-    "name": "blencorp"
+    "name": "blencorp",
+    "email": "support@blencorp.com"
   }
 }

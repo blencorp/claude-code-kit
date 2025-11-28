@@ -3,6 +3,7 @@
   "description": "Tailwind CSS v4 utility-first patterns including responsive design, dark mode, custom themes, component extraction, and best practices for maintainable styles.",
   "version": "1.0.0",
   "author": {
-    "name": "blencorp"
+    "name": "blencorp",
+    "email": "support@blencorp.com"
   }
 }

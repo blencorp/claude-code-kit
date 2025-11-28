@@ -3,6 +3,7 @@
   "description": "shadcn/ui component library patterns including Radix UI primitives, component customization, theming, accessibility, and integration with Tailwind CSS.",
   "version": "1.0.0",
   "author": {
-    "name": "blencorp"
+    "name": "blencorp",
+    "email": "support@blencorp.com"
   }
 }

@@ -3,7 +3,8 @@
   "description": "Framework detection and plugin installer for Claude Code. Detects your project's tech stack (Next.js, React, Express, Prisma, etc.) and installs the appropriate plugins automatically.",
   "version": "1.0.0",
   "author": {
-    "name": "blencorp"
+    "name": "blencorp",
+    "email": "support@blencorp.com"
   },
   "repository": "https://github.com/blencorp/claude-code-kit"
 }

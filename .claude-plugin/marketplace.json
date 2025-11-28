@@ -1,17 +1,82 @@
 {
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "claude-code-kit",
-  "description": "A curated collection of framework-specific plugins for Claude Code with automatic detection",
   "version": "1.0.0",
+  "description": "Framework-specific plugins for Claude Code with automatic detection and installation",
+  "owner": {
+    "name": "blencorp",
+    "email": "support@blencorp.com"
+  },
   "plugins": [
-    "nextjs",
-    "react",
-    "express",
-    "nodejs",
-    "prisma",
-    "tailwindcss",
-    "shadcn",
-    "mui",
-    "tanstack-query",
-    "tanstack-router"
+    {
+      "name": "nextjs",
+      "description": "Next.js 15+ App Router, Server Components, Server Actions",
+      "source": "./cli/kits/nextjs",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "react",
+      "description": "React 18+ hooks, Suspense, lazy loading, TypeScript patterns",
+      "source": "./cli/kits/react",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "express",
+      "description": "Express.js routing, middleware, controllers, error handling",
+      "source": "./cli/kits/express",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "nodejs",
+      "description": "Node.js backend patterns with TypeScript and layered architecture",
+      "source": "./cli/kits/nodejs",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "prisma",
+      "description": "Prisma ORM patterns for type-safe database access",
+      "source": "./cli/kits/prisma",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "tailwindcss",
+      "description": "Tailwind CSS v4 utility patterns and responsive design",
+      "source": "./cli/kits/tailwindcss",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "shadcn",
+      "description": "shadcn/ui component library with Radix UI primitives",
+      "source": "./cli/kits/shadcn",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mui",
+      "description": "Material-UI v7 components and sx prop styling",
+      "source": "./cli/kits/mui",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "tanstack-query",
+      "description": "TanStack Query v5 data fetching and cache management",
+      "source": "./cli/kits/tanstack-query",
+      "category": "development",
+      "version": "1.0.0"
+    },
+    {
+      "name": "tanstack-router",
+      "description": "TanStack Router file-based routing with type-safe navigation",
+      "source": "./cli/kits/tanstack-router",
+      "category": "development",
+      "version": "1.0.0"
+    }
   ]
 }
