@@ -11,20 +11,39 @@
         "useCallback",
         "useMemo",
         "useRef",
+        "useContext",
+        "useReducer",
+        "useTransition",
+        "useDeferredValue",
+        "useId",
+        "useSyncExternalStore",
+        "useImperativeHandle",
+        "useLayoutEffect",
         "React.lazy",
+        "React.memo",
+        "React.forwardRef",
+        "React.createContext",
+        "createContext",
+        "forwardRef",
         "Suspense",
-        "react component",
-        "functional component"
+        "ErrorBoundary",
+        "StrictMode",
+        "startTransition",
+        "flushSync",
+        "createPortal",
+        "cloneElement"
       ],
       "intentPatterns": [
-        "create.*(component|react.*component)",
-        "add.*component",
-        "use.*hook",
-        "implement.*(useState|useEffect|useCallback|useMemo)",
-        "add.*lazy.*loading",
-        "create.*suspense.*boundary",
-        "optimize.*component",
-        "memoize.*component"
+        "use.*react.*hook",
+        "implement.*(useState|useEffect|useCallback|useMemo|useContext|useReducer)",
+        "add.*react.*(lazy|suspense|memo)",
+        "create.*react.*context",
+        "optimize.*react.*component",
+        "memoize.*react.*component",
+        "use.*(useTransition|useDeferredValue)",
+        "create.*error.*boundary",
+        "implement.*react.*(forwardRef|memo)",
+        "add.*react.*portal"
       ]
     },
     "fileTriggers": {
@@ -32,12 +51,22 @@
         "**/*.tsx",
         "**/*.jsx",
         "**/components/**/*.ts",
-        "**/features/**/*.tsx"
+        "**/features/**/*.tsx",
+        "**/hooks/**/*.ts",
+        "**/hooks/**/*.tsx"
       ],
       "contentPatterns": [
         "import.*from ['\"]react['\"]",
-        "useState<",
-        "useEffect\\("
+        "import.*React.*from ['\"]react['\"]",
+        "useState\\(",
+        "useEffect\\(",
+        "useCallback\\(",
+        "useMemo\\(",
+        "useContext\\(",
+        "useReducer\\(",
+        "React\\.memo\\(",
+        "React\\.lazy\\(",
+        "forwardRef\\("
       ]
     }
   }

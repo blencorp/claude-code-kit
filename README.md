@@ -39,10 +39,10 @@ When installed, kits make Claude Code an expert in your stack.
 
 | Kit | Description | Documentation |
 |-----|-------------|---------------|
-| **Next.js** | Next.js 15+ App Router, Server Components, Server Actions | [SKILL.md](cli/kits/nextjs/skills/nextjs/SKILL.md) |
+| **Next.js** | Next.js 15+ App Router, Server Components, Server Actions | [README](cli/kits/nextjs/README.md) |
 | **React** | React 19 hooks, Suspense, lazy loading, TypeScript patterns | [README](cli/kits/react/README.md) |
-| **shadcn/ui** | shadcn/ui component library with Tailwind CSS | [SKILL.md](cli/kits/shadcn/skills/shadcn/SKILL.md) |
-| **Tailwind CSS** | Tailwind v4 utilities, responsive design, theming | [SKILL.md](cli/kits/tailwindcss/skills/tailwindcss/SKILL.md) |
+| **shadcn/ui** | shadcn/ui component library with Tailwind CSS | [README](cli/kits/shadcn/README.md) |
+| **Tailwind CSS** | Tailwind v4 utilities, responsive design, theming | [README](cli/kits/tailwindcss/README.md) |
 | **Material-UI** | MUI v7 components, sx prop styling, theming | [README](cli/kits/mui/README.md) |
 | **TanStack Router** | File-based routing, loaders, type-safe navigation | [README](cli/kits/tanstack-router/README.md) |
 | **TanStack Query** | Data fetching with useSuspenseQuery, cache management | [README](cli/kits/tanstack-query/README.md) |

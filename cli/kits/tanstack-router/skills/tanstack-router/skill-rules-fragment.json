@@ -6,28 +6,64 @@
     "promptTriggers": {
       "keywords": [
         "tanstack router",
+        "@tanstack/react-router",
         "createFileRoute",
+        "createRootRoute",
+        "createRoute",
+        "createRouter",
+        "RouterProvider",
         "useNavigate",
         "useParams",
+        "useSearch",
+        "useLoaderData",
+        "useRouter",
+        "useMatches",
+        "useMatch",
+        "useLocation",
         "route loader",
-        "@tanstack/react-router"
+        "Route.lazy",
+        "beforeLoad",
+        "validateSearch",
+        "Link",
+        "Outlet",
+        "Navigate",
+        "redirect",
+        "notFound"
       ],
       "intentPatterns": [
-        "create.*route",
-        "add.*route",
-        "implement.*navigation",
-        "create.*loader",
-        "add.*route.*parameter"
+        "create.*tanstack.*route",
+        "add.*tanstack.*route",
+        "setup.*tanstack.*router",
+        "implement.*file.*based.*routing",
+        "create.*route.*loader",
+        "add.*route.*validation",
+        "use.*tanstack.*navigation",
+        "create.*lazy.*route",
+        "implement.*route.*guard",
+        "add.*search.*params.*validation",
+        "create.*router.*tanstack"
       ]
     },
     "fileTriggers": {
       "pathPatterns": [
         "**/routes/**/*.tsx",
-        "**/routes/**/*.ts"
+        "**/routes/**/*.ts",
+        "**/routes/**/*.lazy.tsx",
+        "**/routes/**/*.lazy.ts",
+        "**/__root.tsx"
       ],
       "contentPatterns": [
         "createFileRoute\\(",
-        "import.*@tanstack/react-router"
+        "createRootRoute\\(",
+        "createRoute\\(",
+        "createRouter\\(",
+        "import.*@tanstack/react-router",
+        "from '@tanstack/react-router'",
+        "RouterProvider",
+        "useNavigate\\(\\)",
+        "useParams\\(\\)",
+        "useSearch\\(\\)",
+        "Route\\.lazy"
       ]
     }
   }

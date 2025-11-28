@@ -1,7 +1,6 @@
 ---
 name: code-refactor-master
-description: Refactor code for better organization, cleaner architecture, and improved maintainability
-model: opus
+description: Refactor code for better organization, cleaner architecture, and improved maintainability. Use when reorganizing code, cleaning up messy files, extracting components, splitting large files, or improving code structure.
 color: cyan
 ---
 

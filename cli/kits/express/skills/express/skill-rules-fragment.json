@@ -2,36 +2,68 @@
   "express": {
     "type": "domain",
     "enforcement": "suggest",
-    "priority": "medium",
+    "priority": "high",
     "promptTriggers": {
       "keywords": [
         "express",
+        "express.js",
         "express.Router",
+        "express.json",
+        "express.urlencoded",
+        "express.static",
         "app.get",
         "app.post",
-        "middleware",
+        "app.put",
+        "app.delete",
+        "app.patch",
+        "app.use",
+        "app.listen",
+        "app.route",
+        "express middleware",
         "req.body",
-        "res.json"
+        "req.params",
+        "req.query",
+        "req.headers",
+        "res.json",
+        "res.send",
+        "res.status",
+        "res.redirect",
+        "router.route",
+        "next()"
       ],
       "intentPatterns": [
         "create.*express.*route",
         "add.*express.*middleware",
-        "create.*api.*endpoint",
-        "implement.*controller"
+        "setup.*express.*server",
+        "configure.*express.*app",
+        "create.*express.*router",
+        "handle.*express.*request",
+        "create.*rest.*api.*express",
+        "express.*error.*handling",
+        "add.*express.*endpoint"
       ]
     },
     "fileTriggers": {
       "pathPatterns": [
         "**/routes/**/*.ts",
+        "**/routes/**/*.js",
         "**/controllers/**/*.ts",
+        "**/controllers/**/*.js",
         "**/middleware/**/*.ts",
+        "**/middleware/**/*.js",
         "**/app.ts",
-        "**/server.ts"
+        "**/app.js",
+        "**/server.ts",
+        "**/server.js"
       ],
       "contentPatterns": [
         "import.*express",
+        "require.*express",
+        "from 'express'",
         "Router\\(\\)",
-        "app\\.(get|post|put|delete)"
+        "app\\.(get|post|put|delete|patch|use|listen)",
+        "express\\.json\\(\\)",
+        "express\\.Router\\(\\)"
       ]
     }
   }

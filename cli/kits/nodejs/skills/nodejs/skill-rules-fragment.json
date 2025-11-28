@@ -2,33 +2,72 @@
   "nodejs": {
     "type": "domain",
     "enforcement": "suggest",
-    "priority": "low",
+    "priority": "medium",
     "promptTriggers": {
       "keywords": [
         "node.js",
         "nodejs",
-        "async/await",
         "process.env",
+        "process.argv",
+        "process.cwd",
         "require(",
-        "module.exports"
+        "module.exports",
+        "__dirname",
+        "__filename",
+        "fs.readFile",
+        "fs.writeFile",
+        "fs.promises",
+        "path.join",
+        "path.resolve",
+        "http.createServer",
+        "https.createServer",
+        "EventEmitter",
+        "Buffer",
+        "stream.Readable",
+        "stream.Writable",
+        "child_process",
+        "os.platform",
+        "crypto.createHash",
+        "util.promisify"
       ],
       "intentPatterns": [
         "create.*node.*server",
-        "implement.*async.*function",
-        "handle.*error",
-        "create.*service"
+        "read.*file.*node",
+        "write.*file.*node",
+        "use.*node.*fs",
+        "create.*node.*stream",
+        "spawn.*child.*process",
+        "use.*buffer",
+        "create.*http.*server",
+        "use.*path.*module",
+        "handle.*process.*events",
+        "use.*node.*(fs|path|http|crypto|stream)"
       ]
     },
     "fileTriggers": {
       "pathPatterns": [
         "**/services/**/*.ts",
+        "**/services/**/*.js",
         "**/utils/**/*.ts",
-        "**/lib/**/*.ts"
+        "**/utils/**/*.js",
+        "**/lib/**/*.ts",
+        "**/lib/**/*.js",
+        "**/scripts/**/*.js",
+        "**/scripts/**/*.ts"
       ],
       "contentPatterns": [
-        "async.*function",
-        "await.*",
-        "process\\.env"
+        "import.*fs.*from 'fs'",
+        "import.*path.*from 'path'",
+        "import.*http.*from 'http'",
+        "require\\('fs'\\)",
+        "require\\('path'\\)",
+        "require\\('http'\\)",
+        "process\\.env",
+        "__dirname",
+        "__filename",
+        "Buffer\\.",
+        "createServer\\(",
+        "EventEmitter"
       ]
     }
   }

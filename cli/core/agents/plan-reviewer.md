@@ -1,6 +1,6 @@
 ---
 name: plan-reviewer
-description: Review development plans before implementation to identify potential issues and missing considerations
+description: Review development plans before implementation to identify potential issues and missing considerations. Use when reviewing plans, validating strategies, before starting implementation, or when you want to make sure nothing is missed.
 model: opus
 color: yellow
 ---

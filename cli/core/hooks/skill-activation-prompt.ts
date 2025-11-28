@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 import { readFileSync } from 'fs';
-import { join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+// Get the directory of this script (for ESM compatibility)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 interface HookInput {
     session_id: string;
@@ -64,7 +69,8 @@ async function main() {
         const prompt = data.prompt.toLowerCase();
 
         // Load skill and agent rules
-        const projectDir = process.env.CLAUDE_PROJECT_DIR || '$HOME/project';
+        // Script is at .claude/hooks/, so go up 2 levels to get project root
+        const projectDir = process.env.CLAUDE_PROJECT_DIR || join(__dirname, '..', '..');
         const rulesPath = join(projectDir, '.claude', 'skills', 'skill-rules.json');
         const rules: SkillRules = JSON.parse(readFileSync(rulesPath, 'utf-8'));
 
@@ -78,11 +84,14 @@ async function main() {
                 continue;
             }
 
-            // Keyword matching
+            // Keyword matching (with word boundaries)
             if (triggers.keywords) {
-                const keywordMatch = triggers.keywords.some(kw =>
-                    prompt.includes(kw.toLowerCase())
-                );
+                const keywordMatch = triggers.keywords.some(kw => {
+                    // Escape special regex characters in keyword
+                    const escaped = kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+                    return regex.test(prompt);
+                });
                 if (keywordMatch) {
                     matchedSkills.push({ name: skillName, matchType: 'keyword', config });
                     continue;
@@ -109,11 +118,14 @@ async function main() {
                     continue;
                 }
 
-                // Keyword matching
+                // Keyword matching (with word boundaries)
                 if (triggers.keywords) {
-                    const keywordMatch = triggers.keywords.some(kw =>
-                        prompt.includes(kw.toLowerCase())
-                    );
+                    const keywordMatch = triggers.keywords.some(kw => {
+                        // Escape special regex characters in keyword
+                        const escaped = kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+                        return regex.test(prompt);
+                    });
                     if (keywordMatch) {
                         matchedAgents.push({ name: agentName, matchType: 'keyword', config });
                         continue;
@@ -135,86 +147,80 @@ async function main() {
 
         // Generate output if matches found
         if (matchedSkills.length > 0 || matchedAgents.length > 0) {
-            let output = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
-            output += '🎯 SKILL ACTIVATION CHECK\n';
-            output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+            // Group skills by priority
+            const criticalSkills = matchedSkills.filter(s => s.config.priority === 'critical');
+            const highSkills = matchedSkills.filter(s => s.config.priority === 'high');
+            const mediumSkills = matchedSkills.filter(s => s.config.priority === 'medium');
+            const lowSkills = matchedSkills.filter(s => s.config.priority === 'low');
 
-            // Group by priority
-            const critical = matchedSkills.filter(s => s.config.priority === 'critical');
-            const high = matchedSkills.filter(s => s.config.priority === 'high');
-            const medium = matchedSkills.filter(s => s.config.priority === 'medium');
-            const low = matchedSkills.filter(s => s.config.priority === 'low');
+            // Group agents by priority
+            const criticalAgents = matchedAgents.filter(a => a.config.priority === 'critical');
+            const highAgents = matchedAgents.filter(a => a.config.priority === 'high');
+            const mediumAgents = matchedAgents.filter(a => a.config.priority === 'medium');
+            const lowAgents = matchedAgents.filter(a => a.config.priority === 'low');
 
-            if (critical.length > 0) {
-                output += '⚠️ CRITICAL SKILLS (REQUIRED):\n';
-                critical.forEach(s => output += `  → ${s.name}\n`);
-                output += '\n';
-            }
+            // Determine if we have critical/high priority items that MUST be activated
+            const mustActivateSkills = [...criticalSkills, ...highSkills];
+            const mustActivateAgents = [...criticalAgents, ...highAgents];
+            const suggestedSkills = [...mediumSkills, ...lowSkills];
+            const suggestedAgents = [...mediumAgents, ...lowAgents];
 
-            if (high.length > 0) {
-                output += '📚 RECOMMENDED SKILLS:\n';
-                high.forEach(s => output += `  → ${s.name}\n`);
-                output += '\n';
-            }
+            let contextParts: string[] = [];
 
-            if (medium.length > 0) {
-                output += '💡 SUGGESTED SKILLS:\n';
-                medium.forEach(s => output += `  → ${s.name}\n`);
-                output += '\n';
-            }
+            // REQUIRED activations (critical + high priority)
+            if (mustActivateSkills.length > 0 || mustActivateAgents.length > 0) {
+                contextParts.push('REQUIRED: Before responding to this prompt, you MUST take the following actions:');
+                contextParts.push('');
 
-            if (low.length > 0) {
-                output += '📌 OPTIONAL SKILLS:\n';
-                low.forEach(s => output += `  → ${s.name}\n`);
-                output += '\n';
-            }
-
-            if (matchedSkills.length > 0) {
-                output += 'ACTION: Use Skill tool BEFORE responding\n';
-            }
-
-            if (matchedAgents.length > 0) {
-                output += '\n💡 RECOMMENDED AGENTS:\n';
-
-                // Group agents by priority
-                const criticalAgents = matchedAgents.filter(a => a.config.priority === 'critical');
-                const highAgents = matchedAgents.filter(a => a.config.priority === 'high');
-                const mediumAgents = matchedAgents.filter(a => a.config.priority === 'medium');
-                const lowAgents = matchedAgents.filter(a => a.config.priority === 'low');
-
-                if (criticalAgents.length > 0) {
-                    output += '⚠️ CRITICAL:\n';
-                    criticalAgents.forEach(a => output += `  → ${a.name}\n`);
+                if (mustActivateSkills.length > 0) {
+                    const skillName = mustActivateSkills[0].name;
+                    const otherSkills = mustActivateSkills.slice(1).map(s => s.name);
+                    contextParts.push(`1. Invoke the Skill tool with skill="${skillName}"`);
+                    contextParts.push('   This skill contains critical guidelines for handling this request.');
+                    if (otherSkills.length > 0) {
+                        contextParts.push(`   Also consider: ${otherSkills.join(', ')}`);
+                    }
+                    contextParts.push('');
                 }
 
-                if (highAgents.length > 0) {
-                    output += '🎯 HIGH PRIORITY:\n';
-                    highAgents.forEach(a => output += `  → ${a.name}\n`);
+                if (mustActivateAgents.length > 0) {
+                    const agentName = mustActivateAgents[0].name;
+                    const step = mustActivateSkills.length > 0 ? '2' : '1';
+                    contextParts.push(`${step}. Use the Task tool with subagent_type="${agentName}"`);
+                    contextParts.push('   This agent is specialized for the task at hand.');
+                    contextParts.push('');
                 }
 
-                if (mediumAgents.length > 0) {
-                    output += '📋 SUGGESTED:\n';
-                    mediumAgents.forEach(a => output += `  → ${a.name}\n`);
+                contextParts.push('Do NOT skip these steps. They ensure quality and consistency.');
+            }
+
+            // SUGGESTED activations (medium + low priority)
+            if (suggestedSkills.length > 0 || suggestedAgents.length > 0) {
+                if (mustActivateSkills.length > 0 || mustActivateAgents.length > 0) {
+                    contextParts.push('');
+                    contextParts.push('ADDITIONAL SUGGESTIONS:');
+                } else {
+                    contextParts.push('SUGGESTED: Consider using these tools for better results:');
+                    contextParts.push('');
                 }
 
-                if (lowAgents.length > 0) {
-                    output += '💭 OPTIONAL:\n';
-                    lowAgents.forEach(a => output += `  → ${a.name}\n`);
+                if (suggestedSkills.length > 0) {
+                    contextParts.push(`- Skills: ${suggestedSkills.map(s => s.name).join(', ')}`);
                 }
-
-                // Output strong activation instruction with actual agent names
-                const highPriorityAgents = [...criticalAgents, ...highAgents];
-                if (highPriorityAgents.length > 0) {
-                    const agentNames = highPriorityAgents.map(a => a.name).join(' or ');
-                    output += `\nACTION: Use Task tool with subagent_type=${highPriorityAgents[0].name} BEFORE responding\n`;
-                } else if (mediumAgents.length > 0) {
-                    output += `\nACTION: Consider using Task tool with subagent_type=${mediumAgents[0].name}\n`;
+                if (suggestedAgents.length > 0) {
+                    contextParts.push(`- Agents: ${suggestedAgents.map(a => a.name).join(', ')}`);
                 }
             }
 
-            output += '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+            // Output in official JSON format for UserPromptSubmit hooks
+            const hookOutput = {
+                hookSpecificOutput: {
+                    hookEventName: 'UserPromptSubmit',
+                    additionalContext: contextParts.join('\n')
+                }
+            };
 
-            console.log(output);
+            console.log(JSON.stringify(hookOutput));
         }
 
         process.exit(0);

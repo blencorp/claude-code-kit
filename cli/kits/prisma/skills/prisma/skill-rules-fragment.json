@@ -2,35 +2,74 @@
   "prisma": {
     "type": "domain",
     "enforcement": "suggest",
-    "priority": "medium",
+    "priority": "high",
     "promptTriggers": {
       "keywords": [
         "prisma",
         "prisma client",
         "prisma schema",
-        "db.model",
         "prisma migrate",
-        "@prisma/client"
+        "prisma studio",
+        "@prisma/client",
+        "PrismaClient",
+        "prisma.create",
+        "prisma.findMany",
+        "prisma.findUnique",
+        "prisma.update",
+        "prisma.delete",
+        "prisma.upsert",
+        "prisma.$transaction",
+        "@id",
+        "@default",
+        "@unique",
+        "@relation",
+        "@map",
+        "schema.prisma",
+        "generator client",
+        "datasource db",
+        "findFirst",
+        "findUnique",
+        "findMany",
+        "include",
+        "select",
+        "where",
+        "orderBy"
       ],
       "intentPatterns": [
-        "create.*database.*model",
+        "create.*prisma.*model",
         "add.*prisma.*schema",
-        "query.*database",
-        "create.*migration",
-        "update.*schema"
+        "create.*prisma.*migration",
+        "update.*prisma.*schema",
+        "query.*with.*prisma",
+        "setup.*prisma.*client",
+        "define.*prisma.*relation",
+        "add.*prisma.*field",
+        "prisma.*transaction",
+        "prisma.*(findMany|findUnique|create|update|delete)",
+        "create.*database.*model.*prisma"
       ]
     },
     "fileTriggers": {
       "pathPatterns": [
         "**/prisma/schema.prisma",
+        "**/prisma/**/*.prisma",
         "**/repositories/**/*.ts",
-        "**/db/**/*.ts"
+        "**/repositories/**/*.js",
+        "**/db/**/*.ts",
+        "**/db/**/*.js",
+        "**/prisma/**/*.ts"
       ],
       "contentPatterns": [
         "import.*@prisma/client",
-        "prisma\\.",
-        "db\\.",
-        "model.*\\{"
+        "from '@prisma/client'",
+        "new PrismaClient\\(\\)",
+        "prisma\\.(create|findMany|findUnique|findFirst|update|delete|upsert)",
+        "prisma\\.\\$transaction",
+        "model\\s+\\w+\\s*\\{",
+        "generator client",
+        "datasource db",
+        "@id",
+        "@relation"
       ]
     }
   }
