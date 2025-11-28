@@ -1,0 +1,8 @@
+{
+  "name": "mui",
+  "description": "Material-UI v7 component patterns including sx prop styling, theme customization, responsive design, and integration with React and TypeScript.",
+  "version": "1.0.0",
+  "author": {
+    "name": "blencorp"
+  }
+}

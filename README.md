@@ -4,42 +4,79 @@
 
 # Claude Code Kit
 
-**Claude Code infrastructure with auto-activating skills and framework-specific kits.**
+**A plugin marketplace for Claude Code with framework-specific skills and automatic detection.**
 
-Install complete Claude Code infrastructure in 30 seconds with automatic framework detection and skill auto-activation.
+Get expert-level Claude Code assistance for your tech stack in seconds.
 
-## Quick Start
+## Quick Start (Plugin Installation)
+
+```bash
+# In Claude Code, run:
+/plugin marketplace add blencorp/claude-code-kit
+
+# Install the kit to get the /setup command
+/plugin install claude-code-kit
+
+# Auto-detect your frameworks and get install recommendations
+/setup
+```
+
+**What happens:**
+1. `/setup` detects your frameworks (Next.js, React, Express, Prisma, etc.)
+2. Shows which plugins match your project
+3. Provides the install command for detected plugins
+4. Skills automatically activate based on conversation context
+
+**Example output from `/setup`:**
+```
+Detected frameworks in your project:
+  ✓ Next.js 15 (found in package.json)
+  ✓ React 18 (found in package.json)
+  ✓ Prisma (found prisma/schema.prisma)
+  ✓ TailwindCSS (found tailwind.config.ts)
+
+To install these plugins:
+  /plugin install nextjs react prisma tailwindcss
+```
+
+---
+
+## Alternative: Legacy Installation
+
+For environments without plugin support, use the bash installer:
 
 ```bash
 npx github:blencorp/claude-code-kit
 ```
 
-**What happens:**
-1. Detects your frameworks (Next.js, React, Express, Prisma, etc.)
-2. Asks which kits to install
-3. Copies hooks, agents, commands, and skills to `.claude/`
-4. Configures automatic skill activation via `skill-rules.json`
-5. Installs everything in < 30 seconds
-
-**Result:** Skills automatically activate when you need them based on your prompts, file edits, and technology usage.
+This copies hooks, agents, commands, and skills directly to `.claude/`.
 
 ---
 
-## What's a Kit?
+## What's a Plugin?
 
-A **kit** is a framework-specific package that includes:
-- **Skill** - Best practices, patterns, and examples for the framework
-- **Auto-activation triggers** - Keywords and patterns that activate the skill
-- **Resources** - Detailed guides organized by topic
-- **Detection logic** - Automatic framework detection
+A **plugin** is a framework-specific package following the official Claude Code plugin format:
 
-When installed, kits make Claude Code an expert in your stack.
+```
+plugin-name/
+├── .claude-plugin/
+│   └── plugin.json          # Plugin metadata
+├── skills/
+│   └── framework-name/
+│       ├── SKILL.md         # Best practices and patterns (<500 lines)
+│       └── resources/       # Detailed guides (progressive disclosure)
+├── commands/                # Optional slash commands
+├── agents/                  # Optional specialized agents
+└── hooks/                   # Optional event handlers
+```
+
+Claude automatically loads skills based on their description - no manual trigger configuration needed.
 
 ---
 
-## Available Kits
+## Available Plugins
 
-### Frontend Kits
+### Frontend Plugins
 
 | Kit | Description | Documentation |
 |-----|-------------|---------------|
@@ -51,7 +88,7 @@ When installed, kits make Claude Code an expert in your stack.
 | **TanStack Router** | File-based routing, loaders, type-safe navigation | [README](cli/kits/tanstack-router/README.md) |
 | **TanStack Query** | Data fetching with useSuspenseQuery, cache management | [README](cli/kits/tanstack-query/README.md) |
 
-### Backend Kits
+### Backend Plugins
 
 | Kit | Description | Documentation |
 |-----|-------------|---------------|
@@ -59,7 +96,7 @@ When installed, kits make Claude Code an expert in your stack.
 | **Node.js** | Layered architecture, async patterns, error handling | [README](cli/kits/nodejs/README.md) |
 | **Prisma** | Prisma ORM query patterns, repository pattern, transactions | [README](cli/kits/prisma/README.md) |
 
-**All kits are auto-detected during installation based on your package.json and project structure.**
+**All plugins are auto-detected by `/setup` based on your package.json and project structure.**
 
 ---
 
@@ -109,27 +146,22 @@ Slash commands for common workflows:
 
 ## How It Works
 
-### Auto-Activation System
+### Native Skill Activation
 
-Skills automatically activate based on:
+Claude Code natively loads skills based on their SKILL.md description. When you install a plugin:
 
-1. **Prompt Keywords**
-   - Example: "create a table component" → shadcn skill activates
-   - Example: "query the database" → Prisma skill activates
+1. **Claude reads the skill description** - Each SKILL.md has a `description` field in its YAML frontmatter
+2. **Claude activates contextually** - Based on your conversation, Claude automatically loads relevant skills
+3. **No configuration needed** - Unlike the legacy system, you don't need to manage trigger rules
 
-2. **Intent Patterns** (Regex)
-   - Example: "add.*authentication" → relevant auth patterns activate
-   - Example: "optimize.*component" → React performance skill activates
+**Examples:**
+- Ask "create a server component" → Next.js skill activates
+- Ask "query the database" → Prisma skill activates
+- Ask "add a button with shadcn" → shadcn skill activates
 
-3. **File Path Triggers**
-   - Editing `app/**/*.tsx` → Next.js skill activates
-   - Editing `prisma/schema.prisma` → Prisma skill activates
+### Legacy Auto-Activation (Optional)
 
-4. **Content Patterns**
-   - File contains `useQuery(` → TanStack Query skill activates
-   - File contains `createFileRoute` → TanStack Router skill activates
-
-All configured in `.claude/skills/skill-rules.json` (auto-generated during install).
+The legacy `claude-setup` installer includes a hook-based trigger system with `skill-rules.json` for explicit control over activation. This is optional - Claude's native skill loading handles most cases.
 
 ### What Gets Installed
 
@@ -233,75 +265,86 @@ npx github:blencorp/claude-code-kit
 
 ---
 
-## Contributing Kits
+## Contributing Plugins
 
-Want to add support for a new framework? Here's how to create a kit:
+Want to add support for a new framework? Here's how to create a plugin:
 
-### Kit Structure
+### Plugin Structure
 
 ```
 cli/kits/your-framework/
-├── kit.json                      # Metadata and detection
+├── .claude-plugin/
+│   └── plugin.json              # Plugin metadata (required)
+├── kit.json                     # Detection logic (for /setup)
 ├── skills/
 │   └── your-framework/
 │       ├── SKILL.md             # Main skill file (<500 lines)
-│       ├── skill-rules-fragment.json  # Auto-activation triggers
 │       └── resources/           # Optional: detailed guides
 │           ├── topic-1.md
 │           └── topic-2.md
-└── agents/                      # Optional: kit-specific agents
-    └── your-framework-agent.md
+├── commands/                    # Optional: slash commands
+├── agents/                      # Optional: specialized agents
+└── hooks/                       # Optional: event handlers
 ```
 
-### kit.json Format
+### plugin.json Format
+
+```json
+{
+  "name": "your-framework",
+  "description": "Complete description including keywords Claude uses to activate this skill contextually. Mention key concepts, APIs, and use cases.",
+  "version": "1.0.0",
+  "author": {
+    "name": "your-name"
+  }
+}
+```
+
+### kit.json Format (for /setup detection)
 
 ```json
 {
   "name": "your-framework",
   "displayName": "Your Framework",
-  "description": "Short description of what this kit provides",
-  "detect": "command to detect framework",
-  "provides": ["skill:your-framework"]
+  "description": "Short description",
+  "detect": {
+    "command": "grep -q '\"your-framework\"' package.json"
+  }
 }
 ```
 
 **Detection Examples:**
 ```bash
 # Detect from package.json
-"detect": "grep -q '\"your-framework\"' package.json"
+"command": "grep -q '\"your-framework\"' package.json"
 
 # Detect from config file
-"detect": "test -f your-framework.config.js"
+"command": "test -f your-framework.config.js"
 
-# Detect from directory
-"detect": "test -d src/your-framework"
+# Multiple conditions
+"command": "grep -q '\"dep\"' package.json || test -f config.js"
 ```
 
 ### SKILL.md Format
 
 Follow Anthropic best practices:
 - Keep main file < 500 lines
-- Use YAML frontmatter
-- Add table of contents
+- Use YAML frontmatter with rich description
 - Use progressive disclosure (link to resources/)
 - Include complete examples
 
 ```markdown
 ---
 name: your-framework
-displayName: Your Framework
-description: Complete description with all keywords for trigger matching (max 1024 chars)
-version: 1.0.0
+description: Complete description with keywords that help Claude activate this skill. Include framework name, key APIs, common tasks, and use cases. This is what Claude reads to decide when to load the skill.
 ---
 
 # Your Framework Development Guide
 
 Best practices for using Your Framework...
 
-## Table of Contents
+## Core Concepts
 
-- [Getting Started](#getting-started)
-- [Core Concepts](#core-concepts)
 ...
 
 ## Additional Resources
@@ -311,68 +354,37 @@ For detailed information, see:
 - [API Reference](resources/api-reference.md)
 ```
 
-### skill-rules-fragment.json Format
+**Key insight:** The `description` field is critical - Claude uses it to decide when to load your skill. Include all relevant keywords naturally in the description.
 
-```json
-{
-  "your-framework": {
-    "type": "domain",
-    "enforcement": "suggest",
-    "priority": "high",
-    "promptTriggers": {
-      "keywords": [
-        "your framework",
-        "framework name",
-        "key concepts"
-      ],
-      "intentPatterns": [
-        "create.*(component|route|feature)",
-        "add.*framework.*feature"
-      ]
-    },
-    "fileTriggers": {
-      "pathPatterns": [
-        "**/your-framework/**/*.ts",
-        "**/config.framework.js"
-      ],
-      "contentPatterns": [
-        "import.*from.*your-framework"
-      ]
-    }
-  }
-}
-```
+### Testing Your Plugin
 
-### Testing Your Kit
+1. **Test with plugin system:**
+   ```bash
+   # In Claude Code
+   /plugin install path/to/your-plugin
+   ```
 
-1. **Test detection:**
+2. **Test detection (for /setup):**
    ```bash
    cd test-project
-   bash cli/kits/your-framework/kit.json # run detect command
+   # Run the detect command from kit.json
+   grep -q '"your-framework"' package.json && echo "detected"
    ```
 
-2. **Test installation:**
-   ```bash
-   ./claude-setup
-   # Select your kit
-   # Verify files copied to .claude/
-   ```
+3. **Test skill activation:**
+   - Mention framework concepts in conversation
+   - Verify Claude loads and uses the skill
 
-3. **Test auto-activation:**
-   - Use trigger keywords in prompts
-   - Edit files matching pathPatterns
-   - Verify skill activates
-
-### Submitting Your Kit
+### Submitting Your Plugin
 
 1. Fork the repository
-2. Create your kit in `cli/kits/your-framework/`
-3. Test thoroughly
-4. Update this README's kit catalog
+2. Create your plugin in `cli/kits/your-framework/`
+3. Test with the plugin system
+4. Update this README's plugin catalog
 5. Submit pull request with:
-   - Kit name and description
+   - Plugin name and description
    - What it covers
-   - Detection mechanism
+   - Detection mechanism (for /setup)
    - Example usage
 
 ---
@@ -381,47 +393,49 @@ For detailed information, see:
 
 ```
 claude-code-kit/
+├── .claude-plugin/
+│   ├── plugin.json              # Main plugin metadata
+│   └── marketplace.json         # Marketplace registry
+├── commands/
+│   └── setup.md                 # /setup command for detection
 ├── cli/
-│   ├── core/                    # Always installed
+│   ├── core/                    # Core infrastructure (legacy installer)
 │   │   ├── hooks/              # 6 hooks
 │   │   ├── agents/             # 6 agents
 │   │   ├── commands/           # 6 commands
 │   │   └── skills/
-│   │       └── skill-developer/  # Meta-skill
-│   └── kits/                    # Framework-specific (optional)
+│   │       └── skill-developer/
+│   └── kits/                    # Framework plugins
 │       ├── nextjs/
+│       │   ├── .claude-plugin/plugin.json
+│       │   ├── kit.json        # Detection logic
+│       │   └── skills/
 │       ├── react/
-│       ├── shadcn/
-│       ├── tailwindcss/
-│       ├── mui/
-│       ├── tanstack-router/
-│       ├── tanstack-query/
 │       ├── express/
-│       ├── nodejs/
-│       └── prisma/
-├── claude-setup                 # Installation script
+│       ├── prisma/
+│       └── ... (10 plugins)
+├── claude-setup                 # Legacy installation script
 ├── package.json
 └── README.md
 ```
 
-**Template vs Installation:**
-- `cli/` directory = **Template** (what gets copied)
-- User's `.claude/` = **Installation** (what they get)
+**Two installation paths:**
+- **Plugin system:** `/plugin marketplace add` → `/plugin install`
+- **Legacy:** `npx github:blencorp/claude-code-kit` (copies to `.claude/`)
 
 ---
 
 ## Updates
 
-Re-run the installer to update or add kits:
+**Plugin system:** Plugins update automatically when you reinstall them:
+```bash
+/plugin install nextjs  # Reinstalls with latest version
+```
 
+**Legacy installer:** Re-run to update:
 ```bash
 npx github:blencorp/claude-code-kit
 ```
-
-The installer detects existing installations and offers:
-- Update existing kits to latest versions
-- Add new kits
-- Keep current setup
 
 ---
 
@@ -449,7 +463,7 @@ This project was inspired by [claude-code-infrastructure-showcase](https://githu
 
 ## Need Help?
 
-- **Installation issues:** Check detection commands in kit.json files
-- **Skills not activating:** Check `.claude/skills/skill-rules.json` was generated
-- **Framework not detected:** Create an issue or submit a kit!
-- **Contributing:** See [Contributing Kits](#contributing-kits) section above
+- **Plugin installation:** Make sure you've added the marketplace first with `/plugin marketplace add`
+- **Framework not detected by /setup:** Check the `detect.command` in the kit.json file
+- **Skill not activating:** Ensure the SKILL.md description includes relevant keywords
+- **Contributing:** See [Contributing Plugins](#contributing-plugins) section above

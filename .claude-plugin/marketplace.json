@@ -1,0 +1,17 @@
+{
+  "name": "claude-code-kit",
+  "description": "A curated collection of framework-specific plugins for Claude Code with automatic detection",
+  "version": "1.0.0",
+  "plugins": [
+    "nextjs",
+    "react",
+    "express",
+    "nodejs",
+    "prisma",
+    "tailwindcss",
+    "shadcn",
+    "mui",
+    "tanstack-query",
+    "tanstack-router"
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "name": "tanstack-query",
+  "description": "TanStack Query v5 data fetching patterns including useQuery, useMutation, useSuspenseQuery, query invalidation, optimistic updates, and infinite queries.",
+  "version": "1.0.0",
+  "author": {
+    "name": "blencorp"
+  }
+}

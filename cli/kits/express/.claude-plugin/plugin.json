@@ -1,0 +1,8 @@
+{
+  "name": "express",
+  "description": "Express.js patterns including routing, middleware, controllers, error handling, request validation, authentication middleware, and RESTful API design.",
+  "version": "1.0.0",
+  "author": {
+    "name": "blencorp"
+  }
+}
