@@ -11,33 +11,28 @@ Get expert-level Claude Code assistance for your tech stack in seconds.
 ## Quick Start (Plugin Installation)
 
 ```bash
-# In Claude Code, run:
+# In Claude Code, add the marketplace and run setup:
 /plugin marketplace add blencorp/claude-code-kit
-
-# Install the kit to get the /setup command
-/plugin install claude-code-kit
-
-# Auto-detect your frameworks and get install recommendations
 /setup
 ```
 
-**What happens:**
-1. `/setup` detects your frameworks (Next.js, React, Express, Prisma, etc.)
-2. Shows which plugins match your project
-3. Provides the install command for detected plugins
-4. Skills automatically activate based on conversation context
+**That's it.** `/setup` detects your frameworks and installs the appropriate plugins automatically.
 
-**Example output from `/setup`:**
+**Example:**
 ```
-Detected frameworks in your project:
-  ✓ Next.js 15 (found in package.json)
-  ✓ React 18 (found in package.json)
-  ✓ Prisma (found prisma/schema.prisma)
-  ✓ TailwindCSS (found tailwind.config.ts)
+## Detected Frameworks
 
-To install these plugins:
-  /plugin install nextjs react prisma tailwindcss
+✓ Next.js (found "next" in package.json)
+✓ React (found "react" in package.json)
+✓ Prisma (found prisma/schema.prisma)
+✓ TailwindCSS (found tailwind.config.ts)
+
+## Installing Plugins
+
+Installing: nextjs, react, prisma, tailwindcss
 ```
+
+Skills then activate automatically based on your conversation context.
 
 ---
 
