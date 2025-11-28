@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -20,6 +20,11 @@ interface PromptTriggers {
     intentPatterns?: string[];
 }
 
+interface FileTriggers {
+    pathPatterns?: string[];
+    contentPatterns?: string[];
+}
+
 interface PostToolUseTriggers {
     enabled: boolean;
     tools: string[];
@@ -32,13 +37,16 @@ interface SkillRule {
     type: 'guardrail' | 'domain';
     enforcement: 'block' | 'suggest' | 'warn';
     priority: 'critical' | 'high' | 'medium' | 'low';
+    description?: string;
     promptTriggers?: PromptTriggers;
+    fileTriggers?: FileTriggers;
 }
 
 interface AgentRule {
     type: 'workflow';
     activation: 'suggest' | 'auto';
     priority: 'critical' | 'high' | 'medium' | 'low';
+    description?: string;
     promptTriggers?: PromptTriggers;
     postToolUseTriggers?: PostToolUseTriggers;
 }
@@ -51,7 +59,7 @@ interface SkillRules {
 
 interface MatchedSkill {
     name: string;
-    matchType: 'keyword' | 'intent';
+    matchType: 'keyword' | 'intent' | 'file';
     config: SkillRule;
 }
 
@@ -67,12 +75,33 @@ async function main() {
         const input = readFileSync(0, 'utf-8');
         const data: HookInput = JSON.parse(input);
         const prompt = data.prompt.toLowerCase();
+        const currentFile = data.cwd || '';
 
-        // Load skill and agent rules
-        // Script is at .claude/hooks/, so go up 2 levels to get project root
+        // Load skill and agent rules with error handling
         const projectDir = process.env.CLAUDE_PROJECT_DIR || join(__dirname, '..', '..');
         const rulesPath = join(projectDir, '.claude', 'skills', 'skill-rules.json');
-        const rules: SkillRules = JSON.parse(readFileSync(rulesPath, 'utf-8'));
+
+        // Check if rules file exists
+        if (!existsSync(rulesPath)) {
+            // Gracefully exit if no rules file (may be initial setup)
+            process.exit(0);
+        }
+
+        // Parse rules with error handling
+        let rules: SkillRules;
+        try {
+            const rulesContent = readFileSync(rulesPath, 'utf-8');
+            rules = JSON.parse(rulesContent);
+        } catch (parseErr) {
+            console.error('Failed to parse skill-rules.json:', parseErr);
+            process.exit(0);  // Don't block user on parse errors
+        }
+
+        // Validate rules structure
+        if (!rules.skills || typeof rules.skills !== 'object') {
+            console.error('skill-rules.json missing or invalid skills object');
+            process.exit(0);
+        }
 
         const matchedSkills: MatchedSkill[] = [];
         const matchedAgents: MatchedAgent[] = [];
@@ -80,32 +109,64 @@ async function main() {
         // Check each skill for matches
         for (const [skillName, config] of Object.entries(rules.skills)) {
             const triggers = config.promptTriggers;
-            if (!triggers) {
-                continue;
-            }
 
-            // Keyword matching (with word boundaries)
-            if (triggers.keywords) {
-                const keywordMatch = triggers.keywords.some(kw => {
-                    // Escape special regex characters in keyword
-                    const escaped = kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    const regex = new RegExp(`\\b${escaped}\\b`, 'i');
-                    return regex.test(prompt);
-                });
-                if (keywordMatch) {
-                    matchedSkills.push({ name: skillName, matchType: 'keyword', config });
-                    continue;
+            // Prompt triggers
+            if (triggers) {
+                // Keyword matching (with word boundaries)
+                if (triggers.keywords) {
+                    const keywordMatch = triggers.keywords.some(kw => {
+                        try {
+                            // Escape special regex characters in keyword
+                            const escaped = kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                            const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+                            return regex.test(prompt);
+                        } catch (err) {
+                            console.error(`Invalid keyword in ${skillName}: ${kw}`, err);
+                            return false;
+                        }
+                    });
+                    if (keywordMatch) {
+                        matchedSkills.push({ name: skillName, matchType: 'keyword', config });
+                        continue;
+                    }
+                }
+
+                // Intent pattern matching with error handling
+                if (triggers.intentPatterns) {
+                    const intentMatch = triggers.intentPatterns.some(pattern => {
+                        try {
+                            const regex = new RegExp(pattern, 'i');
+                            return regex.test(prompt);
+                        } catch (err) {
+                            console.error(`Invalid intent pattern in ${skillName}: ${pattern}`, err);
+                            return false;
+                        }
+                    });
+                    if (intentMatch) {
+                        matchedSkills.push({ name: skillName, matchType: 'intent', config });
+                        continue;
+                    }
                 }
             }
 
-            // Intent pattern matching
-            if (triggers.intentPatterns) {
-                const intentMatch = triggers.intentPatterns.some(pattern => {
-                    const regex = new RegExp(pattern, 'i');
-                    return regex.test(prompt);
+            // File triggers (path-based activation)
+            if (config.fileTriggers?.pathPatterns && currentFile) {
+                const fileMatch = config.fileTriggers.pathPatterns.some(pattern => {
+                    try {
+                        // Convert glob pattern to regex
+                        const globRegex = pattern
+                            .replace(/\*\*/g, '.*')  // ** matches any directory depth
+                            .replace(/\*/g, '[^/]*') // * matches anything except /
+                            .replace(/\?/g, '.');     // ? matches single char
+                        const regex = new RegExp(globRegex, 'i');
+                        return regex.test(currentFile);
+                    } catch (err) {
+                        console.error(`Invalid file pattern in ${skillName}: ${pattern}`, err);
+                        return false;
+                    }
                 });
-                if (intentMatch) {
-                    matchedSkills.push({ name: skillName, matchType: 'intent', config });
+                if (fileMatch) {
+                    matchedSkills.push({ name: skillName, matchType: 'file', config });
                 }
             }
         }
@@ -121,10 +182,15 @@ async function main() {
                 // Keyword matching (with word boundaries)
                 if (triggers.keywords) {
                     const keywordMatch = triggers.keywords.some(kw => {
-                        // Escape special regex characters in keyword
-                        const escaped = kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        const regex = new RegExp(`\\b${escaped}\\b`, 'i');
-                        return regex.test(prompt);
+                        try {
+                            // Escape special regex characters in keyword
+                            const escaped = kw.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                            const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+                            return regex.test(prompt);
+                        } catch (err) {
+                            console.error(`Invalid keyword in ${agentName}: ${kw}`, err);
+                            return false;
+                        }
                     });
                     if (keywordMatch) {
                         matchedAgents.push({ name: agentName, matchType: 'keyword', config });
@@ -132,11 +198,16 @@ async function main() {
                     }
                 }
 
-                // Intent pattern matching
+                // Intent pattern matching with error handling
                 if (triggers.intentPatterns) {
                     const intentMatch = triggers.intentPatterns.some(pattern => {
-                        const regex = new RegExp(pattern, 'i');
-                        return regex.test(prompt);
+                        try {
+                            const regex = new RegExp(pattern, 'i');
+                            return regex.test(prompt);
+                        } catch (err) {
+                            console.error(`Invalid intent pattern in ${agentName}: ${pattern}`, err);
+                            return false;
+                        }
                     });
                     if (intentMatch) {
                         matchedAgents.push({ name: agentName, matchType: 'intent', config });
@@ -169,46 +240,59 @@ async function main() {
 
             // REQUIRED activations (critical + high priority)
             if (mustActivateSkills.length > 0 || mustActivateAgents.length > 0) {
-                contextParts.push('REQUIRED: Before responding to this prompt, you MUST take the following actions:');
+                contextParts.push('IMPORTANT GUIDELINES:');
                 contextParts.push('');
 
                 if (mustActivateSkills.length > 0) {
                     const skillName = mustActivateSkills[0].name;
-                    const otherSkills = mustActivateSkills.slice(1).map(s => s.name);
-                    contextParts.push(`1. Invoke the Skill tool with skill="${skillName}"`);
-                    contextParts.push('   This skill contains critical guidelines for handling this request.');
+                    const skillDisplay = skillName.replace(/-/g, ' ');
+                    const otherSkills = mustActivateSkills.slice(1).map(s => s.name.replace(/-/g, ' '));
+
+                    contextParts.push(`The "${skillDisplay}" skill contains critical best practices for this request.`);
+                    contextParts.push('Before proceeding, review the skill\'s guidelines to ensure:');
+                    contextParts.push('- Adherence to project patterns and conventions');
+                    contextParts.push('- Proper implementation approach');
+                    contextParts.push('- Quality and consistency with existing code');
+
                     if (otherSkills.length > 0) {
-                        contextParts.push(`   Also consider: ${otherSkills.join(', ')}`);
+                        contextParts.push('');
+                        contextParts.push(`Also reference: ${otherSkills.join(', ')} skills`);
                     }
                     contextParts.push('');
                 }
 
                 if (mustActivateAgents.length > 0) {
                     const agentName = mustActivateAgents[0].name;
-                    const step = mustActivateSkills.length > 0 ? '2' : '1';
-                    contextParts.push(`${step}. Use the Task tool with subagent_type="${agentName}"`);
-                    contextParts.push('   This agent is specialized for the task at hand.');
+                    const agentDisplay = agentName.replace(/-/g, ' ');
+                    const description = mustActivateAgents[0].config.description;
+
+                    contextParts.push('RECOMMENDED APPROACH:');
+                    contextParts.push(`For best results, use the "${agentDisplay}" subagent for this task.`);
+                    if (description) {
+                        contextParts.push(`This subagent specializes in: ${description}`);
+                    }
+                    contextParts.push('');
+                    contextParts.push(`To activate it, say: "Use the ${agentDisplay} subagent to handle this."`);
                     contextParts.push('');
                 }
-
-                contextParts.push('Do NOT skip these steps. They ensure quality and consistency.');
             }
 
             // SUGGESTED activations (medium + low priority)
             if (suggestedSkills.length > 0 || suggestedAgents.length > 0) {
                 if (mustActivateSkills.length > 0 || mustActivateAgents.length > 0) {
-                    contextParts.push('');
                     contextParts.push('ADDITIONAL SUGGESTIONS:');
                 } else {
-                    contextParts.push('SUGGESTED: Consider using these tools for better results:');
-                    contextParts.push('');
+                    contextParts.push('SUGGESTED: Consider these resources for better results:');
                 }
+                contextParts.push('');
 
                 if (suggestedSkills.length > 0) {
-                    contextParts.push(`- Skills: ${suggestedSkills.map(s => s.name).join(', ')}`);
+                    const skillNames = suggestedSkills.map(s => s.name.replace(/-/g, ' ')).join(', ');
+                    contextParts.push(`- Skills that may be helpful: ${skillNames}`);
                 }
                 if (suggestedAgents.length > 0) {
-                    contextParts.push(`- Agents: ${suggestedAgents.map(a => a.name).join(', ')}`);
+                    const agentNames = suggestedAgents.map(a => a.name.replace(/-/g, ' ')).join(', ');
+                    contextParts.push(`- Subagents that may be helpful: ${agentNames}`);
                 }
             }
 
@@ -226,11 +310,11 @@ async function main() {
         process.exit(0);
     } catch (err) {
         console.error('Error in skill-activation-prompt hook:', err);
-        process.exit(1);
+        process.exit(0);  // Exit gracefully to not block user
     }
 }
 
 main().catch(err => {
     console.error('Uncaught error:', err);
-    process.exit(1);
+    process.exit(0);  // Exit gracefully
 });
