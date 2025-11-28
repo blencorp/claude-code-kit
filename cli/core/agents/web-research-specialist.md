@@ -1,7 +1,8 @@
 ---
 name: web-research-specialist
 description: Research information on the internet for debugging, finding solutions, and gathering comprehensive information. Use when researching solutions, debugging errors, finding best practices, comparing approaches, or looking up documentation.
-model: sonnet
+model: inherit
+permissionMode: default
 color: blue
 ---
 

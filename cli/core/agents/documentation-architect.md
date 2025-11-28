@@ -2,6 +2,7 @@
 name: documentation-architect
 description: Create, update, or enhance documentation for any part of the codebase. Use when creating documentation, writing docs, updating README files, documenting APIs, or when something needs documentation.
 model: inherit
+permissionMode: default
 color: blue
 ---
 
