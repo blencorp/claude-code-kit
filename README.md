@@ -1,3 +1,7 @@
+<p>
+  <img src="./claude-code-kit.png" alt="Claude Code Kit" />
+</p>
+
 # Claude Code Kit
 
 **Claude Code infrastructure with auto-activating skills and framework-specific kits.**
