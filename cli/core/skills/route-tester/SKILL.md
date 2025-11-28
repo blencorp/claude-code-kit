@@ -1,6 +1,5 @@
 ---
 name: route-tester
-displayName: API Route Testing
 description: Framework-agnostic HTTP API route testing patterns, authentication strategies, and integration testing best practices. Supports REST APIs with JWT cookie authentication and other common auth patterns.
 ---
 

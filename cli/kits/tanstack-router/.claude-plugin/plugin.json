@@ -1,0 +1,9 @@
+{
+  "name": "tanstack-router",
+  "description": "TanStack Router patterns including file-based routing, type-safe navigation, route loaders, search params, and integration with TanStack Query.",
+  "version": "1.0.0",
+  "author": {
+    "name": "blencorp",
+    "email": "support@blencorp.com"
+  }
+}

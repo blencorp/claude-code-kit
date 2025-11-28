@@ -1,0 +1,9 @@
+{
+  "name": "prisma",
+  "description": "Prisma ORM patterns for type-safe database access including schema design, migrations, relations, queries, transactions, and integration with TypeScript.",
+  "version": "1.0.0",
+  "author": {
+    "name": "blencorp",
+    "email": "support@blencorp.com"
+  }
+}

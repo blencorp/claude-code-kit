@@ -1,0 +1,9 @@
+{
+  "name": "react",
+  "description": "React 18+ patterns including hooks (useState, useEffect, useContext, useReducer, useMemo, useCallback), Suspense, lazy loading, error boundaries, and TypeScript integration.",
+  "version": "1.0.0",
+  "author": {
+    "name": "blencorp",
+    "email": "support@blencorp.com"
+  }
+}

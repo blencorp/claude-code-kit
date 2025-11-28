@@ -1,8 +1,6 @@
 ---
 name: nextjs
-displayName: Next.js
 description: Next.js 15+ App Router development patterns including Server Components, Client Components, data fetching, layouts, and server actions. Use when creating pages, routes, layouts, components, API route handlers, server actions, loading states, error boundaries, or working with Next.js navigation and metadata.
-version: 1.0.0
 ---
 
 # Next.js Development Guidelines
