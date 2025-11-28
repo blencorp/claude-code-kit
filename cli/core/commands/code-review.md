@@ -1,6 +1,7 @@
 ---
 description: Review recently written code for adherence to best practices and architectural consistency
 argument-hint: Optional - specific files or components to review (leave empty to auto-detect from session)
+model: inherit
 ---
 
 You are an expert code reviewer focused on quality, best practices, and system integration.

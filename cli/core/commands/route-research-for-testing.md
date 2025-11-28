@@ -2,7 +2,7 @@
 description: Map edited routes & launch tests
 argument-hint: "[/extra/path …]"
 allowed-tools: Bash(cat:*), Bash(awk:*), Bash(grep:*), Bash(sort:*), Bash(xargs:*), Bash(sed:*)
-model: sonnet
+model: inherit
 ---
 
 ## Context

@@ -1,6 +1,7 @@
 ---
 description: Update dev documentation before context compaction
 argument-hint: Optional - specific context or tasks to focus on (leave empty for comprehensive update)
+model: inherit
 ---
 
 We're approaching context limits. Please update the development documentation to ensure seamless continuation after context reset.

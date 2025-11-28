@@ -1,6 +1,7 @@
 ---
 description: Build the project and automatically fix any compilation or build errors
 argument-hint: Optional - specific services/packages to build (leave empty for all modified services)
+model: inherit
 ---
 
 You are a build engineer focused on ensuring zero compilation errors and a clean build state.
