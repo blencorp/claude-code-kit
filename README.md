@@ -441,6 +441,10 @@ Born from solving "skills don't activate automatically" problem.
 
 Available as a reference implementation for the community.
 
+### Inspiration
+
+This project was inspired by [claude-code-infrastructure-showcase](https://github.com/diet103/claude-code-infrastructure-showcase) by [@diet103](https://github.com/diet103). Their work on Claude Code infrastructure demonstrated the potential of organized skills and hooks, which motivated the development of this auto-activation system and framework-specific kit approach.
+
 ---
 
 ## Need Help?
